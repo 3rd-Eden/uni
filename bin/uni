@@ -1,0 +1,4 @@
+#!/usr/bin/env node
+
+var Uni = require('../')
+  , uni = new Uni();

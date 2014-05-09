@@ -1,0 +1,43 @@
+{
+  "name": "uni",
+  "version": "0.0.0",
+  "description": "uni",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/3rd-Eden/uni"
+  },
+  "keywords": [
+    "clone",
+    "flow",
+    "generator",
+    "git",
+    "npm",
+    "orchestrate",
+    "plan",
+    "scaffolding",
+    "uni",
+    "workflow"
+  ],
+  "author": "Arnout Kazemier",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/3rd-Eden/uni/issues"
+  },
+  "homepage": "https://github.com/3rd-Eden/uni",
+  "dependencies": {
+    "argh": "0.1.x",
+    "debug": "^0.8.1",
+    "eventemitter3": "0.1.x",
+    "fusing": "0.2.x",
+    "githulk": "0.0.x",
+    "npm-registry": "0.1.x",
+    "shelljs": "0.3.x"
+  },
+  "bin": {
+    "uni": "./bin/uni"
+  }
+}
