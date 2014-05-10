@@ -107,12 +107,18 @@ LocalStorage.readable('save', function save() {
  * @api private
  */
 LocalStorage.readable('load', function load() {
-  var data = {};
+  var defaults = this.defaults
+    , store = this
+    , data = {};
 
   try { data = this.read(this.file()); }
   catch (e) {}
 
-  this.data = this.merge(this.defaults, data || {});
+  this.data = this.merge(Object.keys(defaults).reduce(function pre(memo, key) {
+    memo[store.key(key)] = defaults[key];
+    return memo;
+  }, {}), data || {});
+
   return this;
 });
 
