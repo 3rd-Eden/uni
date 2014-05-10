@@ -37,7 +37,7 @@ Uni.Command = Uni.CMD = require('./command');
  * @type {String}
  * @public
  */
-Uni.writable('command', args.argv ? arg.argv.shift() : 'help');
+Uni.writable('command', args.argv ? args.argv.shift() : 'help');
 
 /**
  * The command line flags for our given commands.
