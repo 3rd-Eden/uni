@@ -4,7 +4,8 @@ var arg = process.argv.slice(2)
   , fuse = require('fusing')
   , argh = require('argh')
   , path = require('path')
-  , fs = require('fs');
+  , fs = require('fs')
+  , args = argh(arg);
 
 /**
  * An universal integration of GitHub, Git, Node and npm.
@@ -36,7 +37,7 @@ Uni.Command = Uni.CMD = require('./command');
  * @type {String}
  * @public
  */
-Uni.readable('command', arg.length ? arg.shift() : 'create');
+Uni.writable('command', args.argv ? arg.argv.shift() : 'help');
 
 /**
  * The command line flags for our given commands.
@@ -44,7 +45,7 @@ Uni.readable('command', arg.length ? arg.shift() : 'create');
  * @type {Object}
  * @public
  */
-Uni.readable('flag', argh(arg));
+Uni.readable('flag', args);
 
 /**
  * The current working directory on where are are executing.
