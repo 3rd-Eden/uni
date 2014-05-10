@@ -16,7 +16,6 @@ function Uni() {
   if (!(this instanceof Uni)) return new Uni();
 
   this.fuse();
-  this[this.command]();
 }
 
 fuse(Uni, require('eventemitter3'));
@@ -68,21 +67,61 @@ Uni.readable('commands', fs.readdirSync(commands).filter(function filter(folder)
 }).map(function map(folder) {
   var name = folder.toLowerCase();
 
-  //
-  // Also introduce these commands as API methods directly on to the Uni
-  // prototype so we can also use it as programmable API.
-  //
-  Uni.readable(name, function factory() {
-  factory.Command = factory.Command || require('./command/'+ folder);
+  /**
+   * Run the given command.
+   *
+   * @api private
+   */
+  function factory() {
+    factory.Command = factory.Command || require('./command/'+ folder);
 
     var command = new factory.Command(this);
     return command.run(function run() {
       console.log('');
     });
+  }
+
+  //
+  // Override the name for better stack traces so we know which `uni` command it
+  // originates from.
+  //
+  factory.name = factory.displayName = name;
+
+  //
+  // Add a description property to the factory function so we can read the
+  // description from the prototype.
+  //
+  Object.defineProperty(factory, 'description', {
+    get: function get() {
+      factory.Command = factory.Command || require('./command/'+ folder);
+
+      return factory.Command.prototype.description;
+    }
   });
+
+  //
+  // Also introduce these commands as API methods directly on to the Uni
+  // prototype so we can also use it as programmable API.
+  //
+  Uni.readable(name, factory);
 
   return name;
 }));
+
+/**
+ * Execute the command.
+ *
+ * @api private
+ */
+Uni.readable('run', function run() {
+  if (this.flag.help) this.command = 'help';
+
+  if (!~this.commands.indexOf(this.command)) {
+
+  }
+
+  this[this.command]();
+});
 
 //
 // Expose the module.

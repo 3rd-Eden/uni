@@ -11,7 +11,7 @@ module.exports = Uni.Command.extend({
    * @type {String}
    * @public
    */
-  description: 'Clone and initialise a git repository',
+  description: 'clone and initialize a git repository',
 
   steps: {
     //

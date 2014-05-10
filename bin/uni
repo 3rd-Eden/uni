@@ -2,3 +2,5 @@
 
 var Uni = require('../')
   , uni = new Uni();
+
+uni.run();
