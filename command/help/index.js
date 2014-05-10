@@ -17,26 +17,9 @@ module.exports = Uni.Command.extend({
     // Step 1: Output the usage information.
     //
     output: function output() {
-      var uni = this.uni;
-
-      //
-      // Calculate the maximum length of a command, we need to know this so we
-      // can properly align and space the different commands and their
-      // descriptions in the help output.
-      //
-      // The 2 is added to give the longest command some extra room so the
-      // description is more clear.
-      //
-      var max = Math.max.apply(Math, uni.commands.map(function map(cmd) {
-        return cmd.length;
-      })) + 2;
-
-      var help = [
-        'Usage: uni [command] [flags]',
-        '',
-        'Commands:',
-        ''
-      ];
+      var uni = this.uni
+        , max = this.max(uni.commands) + 4
+        , help = ['Usage: uni [command] [flags]', '', 'Commands:', ''];
 
       //
       // Iterate over the commands again to extract the full description of the
@@ -52,5 +35,18 @@ module.exports = Uni.Command.extend({
       help.push('');
       console.log(help.join('\n'));
     }
+  },
+
+  /**
+   * Calculate the maximum length of the items, we need to know this so we
+   * can properly align and space the values.
+   *
+   * @param {Array} arr The array with items we should should scan
+   * @returns {Number} Max length
+   */
+  max: function max(arr) {
+    return Math.max.apply(Math, arr.map(function map(value) {
+      return value.length;
+    }));
   }
 });

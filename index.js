@@ -1,6 +1,7 @@
 'use strict';
 
-var arg = process.argv.slice(2)
+var LocalStorage = require('./localstorage')
+  , arg = process.argv.slice(2)
   , fuse = require('fusing')
   , argh = require('argh')
   , path = require('path')
@@ -11,12 +12,18 @@ var arg = process.argv.slice(2)
  * An universal integration of GitHub, Git, Node and npm.
  *
  * @constructor
+ * @param {String} name Optional name we should use.
  * @public
  */
-function Uni() {
-  if (!(this instanceof Uni)) return new Uni();
+function Uni(name) {
+  if (!(this instanceof Uni)) return new Uni(name);
 
   this.fuse();
+
+  //
+  // Our configuration loader.
+  //
+  this.store = new LocalStorage(name || 'uni');
 }
 
 fuse(Uni, require('eventemitter3'));
@@ -46,6 +53,14 @@ Uni.writable('command', args.argv ? args.argv.shift() : 'help');
  * @public
  */
 Uni.readable('flag', args);
+
+/**
+ * Shortcut for `uni.flag.argv`
+ *
+ * @type {Array}
+ * @public
+ */
+Uni.readable('argv', args.argv || []);
 
 /**
  * The current working directory on where are are executing.
