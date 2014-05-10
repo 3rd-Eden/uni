@@ -44,7 +44,9 @@ module.exports = Help.extend({
       if (!this.uni.flag.list) return;
 
       var keys = Object.keys(this.uni.store.data).map(function map(key) {
-        return key.slice(1);
+        return key.charAt(0) === '$'
+        ? key.slice(1)
+        : key;
       }), max = this.max(keys) + 4;
 
       keys.forEach(function each(key) {

@@ -16,6 +16,7 @@ function LocalStorage(name) {
 
   this.fuse();
 
+  this.defaults = this.read(path.join(__dirname, '.uni.json'));
   this.home = process.env.HOME || process.env.USERPROFILE;
   this.filename = '.'+ name;
   this.prefix = '$';
@@ -67,8 +68,7 @@ LocalStorage.readable('file', function file() {
  * @api public
  */
 LocalStorage.readable('get', function get(key) {
-  key = this.key(key);
-  return this.data[key];
+  return this.data[this.key(key)];
 });
 
 /**
@@ -109,11 +109,22 @@ LocalStorage.readable('save', function save() {
 LocalStorage.readable('load', function load() {
   var data = {};
 
-  try { data = JSON.parse(fs.readFileSync(this.file(), 'utf-8')); }
+  try { data = this.read(this.file()); }
   catch (e) {}
 
-  this.data = data;
+  this.data = this.merge(this.defaults, data || {});
   return this;
+});
+
+/**
+ * Read and parse a JSON document from disk.
+ *
+ * @param {String} file The file that need to be loaded.
+ * @returns {Object} The parsed JSON.
+ * @api public
+ */
+LocalStorage.readable('read', function read(file) {
+  return JSON.parse(fs.readFileSync(file, 'utf-8'));
 });
 
 /**
