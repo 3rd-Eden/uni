@@ -30,10 +30,11 @@
   "homepage": "https://github.com/3rd-Eden/uni",
   "dependencies": {
     "argh": "0.1.x",
-    "debug": "^0.8.1",
+    "debug": "0.8.x",
     "eventemitter3": "0.1.x",
     "fusing": "0.2.x",
     "githulk": "0.0.x",
+    "natural": "0.1.x",
     "npm-registry": "0.1.x",
     "shelljs": "0.3.x"
   },

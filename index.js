@@ -131,12 +131,38 @@ Uni.readable('commands', fs.readdirSync(commands).filter(function filter(folder)
  */
 Uni.readable('run', function run() {
   if (this.flag.help) this.command = 'help';
+  if (~this.commands.indexOf(this.command)) return this[this.command]();
 
-  if (!~this.commands.indexOf(this.command)) {
+  var natural = require('natural')
+    , uni = this
+    , command;
 
-  }
+  [
+      natural.SoundEx,
+      natural.Metaphone,
+      natural.DoubleMetaphone
+  ].some(function some(phonetics) {
+    uni.commands.some(function some(cmd) {
+      if (phonetics.compare(uni.command, cmd)) {
+        command = cmd;
+        return true;
+      }
 
-  this[this.command]();
+      return false;
+    });
+
+    return !!command;
+  });
+
+  //
+  // We've found a match through phonetics, it was most likely a typo so we're
+  // going to process it anyways.
+  //
+  if (command) return this[command]();
+
+  //
+  // 404 Command not Found.
+  //
 });
 
 //
