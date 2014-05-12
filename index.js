@@ -68,6 +68,18 @@ Uni.readable('argv', args.argv || []);
 Uni.readable('cwd', process.cwd());
 
 /**
+ * The command line switches/flags that all commands responding to. Listed as
+ * flag->description / key->value.
+ *
+ * @type {Object}
+ * @public
+ */
+Uni.readable('flags', {
+  '--silence': 'completely silence the stdout output',
+  '--help': 'displays help information for a given command'
+});
+
+/**
  * The different commands that are supported by our command line interface.
  * These are also automatically exposed as API methods.
  *

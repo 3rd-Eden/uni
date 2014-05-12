@@ -18,7 +18,8 @@ module.exports = Uni.Command.extend({
     //
     output: function output() {
       var uni = this.uni
-        , max = this.max(uni.commands) + 4
+        , flags = Object.keys(uni.flags)
+        , max = this.max(uni.commands.concat(flags)) + 4
         , help = ['Usage: uni [command] [flags]', '', 'Commands:', ''];
 
       //
@@ -29,10 +30,19 @@ module.exports = Uni.Command.extend({
       help.push.apply(help, uni.commands.map(function map(cmd) {
         var description = uni[cmd].description;
 
-        return '  '+ cmd +':'+ (new Array(max - cmd.length).join(' ')) + description;
+        return '  '+ cmd + (new Array(max - cmd.length).join(' ')) + description;
       }));
 
       help.push('');
+      help.push('Flags:');
+      help.push('');
+
+      help.push.apply(help, Object.keys(uni.flags).map(function each(cmd) {
+        var description = uni.flags[cmd];
+
+        return '  '+ cmd + (new Array(max - cmd.length).join(' ')) + description;
+      }));
+
       console.log(help.join('\n'));
     }
   },
