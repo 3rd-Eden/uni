@@ -110,6 +110,52 @@ CMD.readable('replace', function replace(template, data) {
   return template;
 });
 
+/**
+ * Async iterate over the given array.
+ *
+ * @param {Array} array Array of items to iterate over.
+ * @param {Function} process The function that processes items.
+ * @param {Function} fn Completion callback
+ * @api public
+ */
+CMD.readable('each', function each(array, process, fn) {
+  var expected = array.length
+    , processed = 0;
+
+  /**
+   * Prevents double invocation of the callback function.
+   *
+   * @param {Error} err Optional error first argument.
+   * @param {Mixed} data Result of some sort.
+   * @api private
+   */
+  function once(err, data) {
+    if (fn) fn(err, data);
+
+    fn = null;
+  }
+
+  array.forEach(function forEach(item) {
+    /**
+     * Simple callback processor. If there's an error we immediately call the
+     * callback. Please note that this does not stop any processing that has
+     * been done on the other items.
+     *
+     * @param {Error} err Optional error argument
+     * @api private
+     */
+    function next(err) {
+      if (err) return once(err);
+      if (++processed === expected) once();
+    }
+
+    next.end = once;
+    process(item, next);
+  });
+
+  return this;
+});
+
 //
 // Expose the module.
 //
