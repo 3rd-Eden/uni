@@ -33,7 +33,7 @@
     "debug": "0.8.x",
     "eventemitter3": "0.1.x",
     "fusing": "0.2.x",
-    "githulk": "0.0.x",
+    "githulk": "0.1.x",
     "natural": "0.1.x",
     "npm-registry": "0.1.x",
     "shelljs": "0.3.x"
