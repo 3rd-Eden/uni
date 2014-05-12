@@ -64,6 +64,12 @@ CMD.readable('run', function run(fn) {
   var steps = Object.keys(this.steps)
     , cmd = this;
 
+  //
+  // Hold on your horses! We've got a --help flag so we shouldn't execute the
+  // command but display the help information instead.
+  //
+  if (this.uni.flag.help) return this.help();
+
   (function iterate(index) {
     var step = cmd.steps[steps[index++]];
 
@@ -168,7 +174,47 @@ CMD.readable('each', function each(array, process, fn) {
  * @api public
  */
 CMD.readable('log', function log(line) {
-  console.log(line);
+  if (!this.uni.flag.silence) console.log(line);
+});
+
+/**
+ * Calculate the maximum length of the items, we need to know this so we
+ * can properly align and space the values.
+ *
+ * @param {Array} arr The array with items we should should scan
+ * @returns {Number} Max length
+ */
+CMD.readable('max', function max(arr) {
+  return Math.max.apply(Math, arr.map(function map(value) {
+    return (value).toString().length;
+  }));
+});
+
+/**
+ * Display help information that we can find
+ *
+ * @returns {CMD}
+ * @api public
+ */
+CMD.readable('help', function halp() {
+  var flags = this.merge(this.flags, this.uni.flags)
+    , max = this.max(Object.keys(flags)) + 4
+    , uni = this
+    , help = [];
+
+  help.push(this.description[0].toUpperCase() + this.description.slice(1) +'.');
+  help.push('');
+  help.push('Usage: uni '+ this.uni.command +' [flags]');
+  help.push('');
+  help.push('Flags:');
+
+  help.push.apply(help, Object.keys(flags).map(function each(cmd) {
+    var description = flags[cmd];
+
+    return '  '+ cmd + (new Array(max - cmd.length).join(' ')) + description;
+  }));
+
+  this.log(help.join('\n'));
 });
 
 //

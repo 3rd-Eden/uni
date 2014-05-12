@@ -139,7 +139,7 @@ Uni.readable('commands', fs.readdirSync(commands).filter(function filter(folder)
  * @api private
  */
 Uni.readable('run', function run() {
-  if (this.flag.help) this.command = 'help';
+  if (!this.command && this.flag.help) this.command = 'help';
   if (~this.commands.indexOf(this.command)) return this[this.command]();
 
   var natural = require('natural')

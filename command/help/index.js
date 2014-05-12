@@ -43,20 +43,7 @@ module.exports = Uni.Command.extend({
         return '  '+ cmd + (new Array(max - cmd.length).join(' ')) + description;
       }));
 
-      console.log(help.join('\n'));
+      this.log(help.join('\n'));
     }
-  },
-
-  /**
-   * Calculate the maximum length of the items, we need to know this so we
-   * can properly align and space the values.
-   *
-   * @param {Array} arr The array with items we should should scan
-   * @returns {Number} Max length
-   */
-  max: function max(arr) {
-    return Math.max.apply(Math, arr.map(function map(value) {
-      return (value).toString().length;
-    }));
   }
 });
