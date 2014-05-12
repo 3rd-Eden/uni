@@ -74,17 +74,29 @@ var Clone = module.exports = Uni.Command.extend({
     },
 
     //
-    // Step 1: Clone the git repository so we got something to initialize.
+    // Step 2: Clone the git repository so we got something to initialize.
     //
     clone: function clone() {
       this.git().clone([this.url].concat(this.uni.flag.argv).join(' ').trim());
     },
 
     //
-    // Step 2: Detect if there's a `package.json` in the directory and install
+    // Step 3: Automatically install and initialize all submodules in a given
+    // repository.
+    //
+    submodule: function submodule() {
+      var project = this.githulk.project(this.url);
+
+      this.shelly.pushd(project.repo);
+      this.git().submodule('update --init --recursive');
+      this.shelly.popd();
+    },
+
+    //
+    // Step 4: Detect if there's a `package.json` in the directory and install
     // the dependencies.
     //
-    npm: function npm() {
+    install: function npm() {
       var project = this.githulk.project(this.url)
         , directory = path.join(this.uni.cwd, project.repo)
         , json;
@@ -100,18 +112,6 @@ var Clone = module.exports = Uni.Command.extend({
 
       this.shelly.pushd(project.repo);
       this.shelly.exec('npm install', { silent: true });
-      this.shelly.popd();
-    },
-
-    //
-    // Step 3: Automatically install and initialize all submodules in a given
-    // repository.
-    //
-    submodule: function submodule() {
-      var project = this.githulk.project(this.url);
-
-      this.shelly.pushd(project.repo);
-      this.git().submodule('update --init --recursive');
       this.shelly.popd();
     }
   },
