@@ -46,7 +46,7 @@ module.exports = Uni.Command.extend({
    */
   max: function max(arr) {
     return Math.max.apply(Math, arr.map(function map(value) {
-      return value.length;
+      return (value).toString().length;
     }));
   }
 });

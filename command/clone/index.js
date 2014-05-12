@@ -14,6 +14,17 @@ var Clone = module.exports = Uni.Command.extend({
    */
   description: 'clone and initialize a git repository',
 
+  /**
+   * The command line switches/flags that this command is responding to listed
+   * as flag->description / key->value.
+   *
+   * @type {Object}
+   * @public
+   */
+  flags: {
+    '--create': 'create the folder of the user/orgs to clone the repositories in'
+  },
+
   steps: {
     //
     // Step 1: Figure out the URL to the git repository that we need to clone.
@@ -57,6 +68,23 @@ var Clone = module.exports = Uni.Command.extend({
 
       this.githulk.repository.list(this.url, function list(err, repos) {
         if (err) return next.end(err);
+
+        //
+        // Check if we need to create the folder where we should clone the
+        // repositories in. We make the assumption that you want to have it
+        // named in the same way as the name of the user/organisation you want
+        // clone.
+        //
+        if (uni.flags.create) {
+          if (!fs.existsSync(path.join(uni.cwd, command.url))) {
+            fs.mkdirSync(path.join(uni.cwd, command.url));
+          }
+
+          //
+          // Make sure that we update our working directory and path.
+          //
+          command.shelly.cd(uni.cwd = path.join(uni.cwd, command.url));
+        }
 
         command.each(repos, function each(repo, next) {
           if (fs.existsSync(path.join(uni.cwd, repo.name))) return next();

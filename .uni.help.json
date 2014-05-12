@@ -1,0 +1,7 @@
+{
+  "ocd": "Your OCD preference. This can either be sorting `alphabetical` or based on the `length` of the items",
+  "registry": "The default npm registry we should use for looking up package information",
+  "github-clone": "The git URL template for when you clone GitHub repositories",
+  "token": "Personal GitHub access/authorization token which is used to communicate with the API",
+  "cols": "Maximum length of the console output"
+}

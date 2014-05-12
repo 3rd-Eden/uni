@@ -57,6 +57,7 @@ CMD.readable('git', require('../git'));
  * Execute the various of execution steps of a given command.
  *
  * @param {Function} fn Completion callback.
+ * @returns {CMD}
  * @api private
  */
 CMD.readable('run', function run(fn) {
@@ -92,6 +93,8 @@ CMD.readable('run', function run(fn) {
 
     step.call(cmd, next);
   }(0));
+
+  return this;
 });
 
 /**
@@ -116,6 +119,7 @@ CMD.readable('replace', function replace(template, data) {
  * @param {Array} array Array of items to iterate over.
  * @param {Function} process The function that processes items.
  * @param {Function} fn Completion callback
+ * @returns {CMD}
  * @api public
  */
 CMD.readable('each', function each(array, process, fn) {
@@ -154,6 +158,17 @@ CMD.readable('each', function each(array, process, fn) {
   });
 
   return this;
+});
+
+/**
+ * Write things to STDOUT.
+ *
+ * @param {String} line Line to log
+ * @returns {CMD}
+ * @api public
+ */
+CMD.readable('log', function log(line) {
+  console.log(line);
 });
 
 //
