@@ -1,7 +1,8 @@
 'use strict';
 
 var Uni = require('../../')
-  , path = require('path');
+  , path = require('path')
+  , fs = require('fs');
 
 var Clone = module.exports = Uni.Command.extend({
   /**
@@ -51,11 +52,15 @@ var Clone = module.exports = Uni.Command.extend({
         return next();
       }
 
-      var command = this;
+      var command = this
+        , uni = this.uni;
+
       this.githulk.repository.list(this.url, function list(err, repos) {
         if (err) return next.end(err);
 
         command.each(repos, function each(repo, next) {
+          if (fs.existsSync(path.join(uni.cwd, repo.name))) return next();
+
           var clone = new Clone(command.uni);
 
           //
