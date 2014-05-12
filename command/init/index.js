@@ -78,7 +78,7 @@ module.exports = Uni.Command.extend({
    * @api private
    */
   ocd: function ocd(data) {
-    if ('alphabetical' === this.uni.store.get('ocd')) {
+    if ('alphabetical' === this.uni.conf.get('ocd')) {
       return this.alpabetical(data);
     }
 

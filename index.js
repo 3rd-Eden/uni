@@ -20,10 +20,7 @@ function Uni(name) {
 
   this.fuse();
 
-  //
-  // Our configuration loader.
-  //
-  this.store = new LocalStorage(name || 'uni');
+  this.readable('conf', new LocalStorage(name || 'uni'));
 }
 
 fuse(Uni, require('eventemitter3'));

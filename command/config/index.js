@@ -21,7 +21,7 @@ module.exports = Help.extend({
 
       var key = this.uni.argv[0];
 
-      console.log(key, this.uni.store.get(key));
+      console.log(key, this.uni.conf.get(key));
     },
 
     //
@@ -43,7 +43,7 @@ module.exports = Help.extend({
     list: function list() {
       if (!this.uni.flag.list) return;
 
-      var keys = Object.keys(this.uni.store.data).map(function map(key) {
+      var keys = Object.keys(this.uni.conf.data).map(function map(key) {
         return key.charAt(0) === '$'
         ? key.slice(1)
         : key;
@@ -51,7 +51,7 @@ module.exports = Help.extend({
 
       keys.forEach(function each(key) {
         console.log(key +':'+ Array(max - key.length).join(' '), this.get(key));
-      }, this.uni.store);
+      }, this.uni.conf);
     }
   }
 });

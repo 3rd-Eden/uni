@@ -1,4 +1,5 @@
 {
-  "registry": "http://registry.npmjs.org/",
-  "ocd": "alphabetical"
+  "github-clone": "git@github.com:{user}/{repo}.git",
+  "ocd": "alphabetical",
+  "registry": "http://registry.npmjs.org/"
 }
