@@ -75,7 +75,7 @@ var Clone = module.exports = Uni.Command.extend({
         // named in the same way as the name of the user/organisation you want
         // clone.
         //
-        if (uni.flags.create) {
+        if (uni.flag.create) {
           if (!fs.existsSync(path.join(uni.cwd, command.url))) {
             fs.mkdirSync(path.join(uni.cwd, command.url));
           }
@@ -89,13 +89,15 @@ var Clone = module.exports = Uni.Command.extend({
         command.each(repos, function each(repo, next) {
           if (fs.existsSync(path.join(uni.cwd, repo.name))) return next();
 
-          var clone = new Clone(command.uni);
+          var clone = new Clone(command.uni)
+            , project = command.githulk.project(repo.full_name)
+            , url = command.replace(uni.conf.get('github-clone'), project);
 
           //
           // Set the correct clone URL for this command so we can bypass this
           // whole URL check and start cloning URL's directly.
           //
-          clone.url = repo.clone_url;
+          clone.url = url;
           clone.run(next);
         }, next.end);
       });

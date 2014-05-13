@@ -65,7 +65,7 @@ Uni.readable('argv', args.argv || []);
  * @type {String}
  * @public
  */
-Uni.readable('cwd', process.cwd());
+Uni.writable('cwd', process.cwd());
 
 /**
  * The command line switches/flags that all commands responding to. Listed as
