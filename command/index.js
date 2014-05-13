@@ -204,7 +204,7 @@ CMD.readable('help', function halp() {
 
   help.push(this.description[0].toUpperCase() + this.description.slice(1) +'.');
   help.push('');
-  help.push('Usage: uni '+ this.uni.command +' [flags]');
+  help.push(this.usage || 'Usage: uni '+ this.uni.command +' [flags]');
   help.push('');
   help.push('Flags:');
 

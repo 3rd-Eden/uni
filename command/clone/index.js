@@ -25,6 +25,14 @@ var Clone = module.exports = Uni.Command.extend({
     '--create': 'create the folder of the user/orgs to clone the repositories in'
   },
 
+  /**
+   * The usage information for this given command.
+   *
+   * @type {String}
+   * @public
+   */
+  usage: 'uni clone [flags] <repo> -- <optional git clone flags>',
+
   steps: {
     //
     // Step 1: Figure out the URL to the git repository that we need to clone.

@@ -12,6 +12,14 @@ module.exports = Uni.Command.extend({
    */
   description: 'displays this help message',
 
+  /**
+   * The command line usage instructions.
+   *
+   * @type {String}
+   * @public
+   */
+  usage: 'uni --help, uni help',
+
   steps: {
     //
     // Step 1: Output the usage information.
