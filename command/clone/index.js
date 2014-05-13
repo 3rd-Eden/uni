@@ -128,6 +128,7 @@ var Clone = module.exports = Uni.Command.extend({
     //
     install: function npm() {
       var project = this.githulk.project(this.url)
+        , registry = this.uni.conf.get('registry')
         , directory = path.join(this.uni.cwd, project.repo)
         , json;
 
@@ -140,8 +141,17 @@ var Clone = module.exports = Uni.Command.extend({
       try { json = require(path.join(directory, 'package.json')); }
       catch (e) { return; }
 
+      //
+      // The registry in our configuration has a trailing slash as it's required
+      // for our npm-registry module but the npm cli client requires it without
+      // a slash.
+      //
+      registry = registry.slice(0, -1);
+
       this.shelly.pushd(project.repo);
-      this.shelly.exec('npm install', { silent: true });
+      this.shelly.exec('npm install --always-auth --no-strict-ssl --reg '+ registry, {
+        silent: false
+      });
       this.shelly.popd();
     }
   },
