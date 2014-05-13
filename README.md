@@ -4,6 +4,29 @@
 was designed to get out of your way and make development and usage of these
 tools enjoyable again.
 
+Your productivity will suffer once you get annoyed by the tools you are using on
+a daily basis. Thats why developer satisfaction and user experience are first
+class citizens in uni. 
+
+**typos**
+Typo's are human, when you want to have something done quickly and rush it there
+will be a higher chance of typo's than regularly. The last thing you want is
+that your tools start complaining `git puhs is not a command, did you mean git
+push`. They already know the command does not exists and it closely resembles a
+command that does exist.. We don't have this kind of bullshit in uni. We just
+execute the damned command as you intended.
+
+**less is more**
+Ever been annoyed by CLI applications that think it would be interesting for you
+as a user to know that they just make a HTTP GET request and got 304 response? I
+certainly did. In uni we simply ignore all this crap and only output the
+progress of a command. Just keeping it simple and short.
+
+**silence is golden**
+Don't want any output at all because you simply don't care? Just append a
+`--silence` flag to your commands and it's gone. Need to be silenced for ever?
+Toggle the configuration flag and never be bothered again.
+
 ## Installation
 
 **uni** assumes that you have the [node], [npm] and [git] binaries installed on
