@@ -1,6 +1,7 @@
 'use strict';
 
 var Registry = require('npm-registry')
+  , dot = require('dot-component')
   , GitHulk = require('githulk')
   , shelly = require('shelljs')
   , fuse = require('fusing');
@@ -112,9 +113,11 @@ CMD.readable('run', function run(fn) {
  * @api public
  */
 CMD.readable('replace', function replace(template, data) {
-  Object.keys(data).forEach(function each(key) {
-    template = template.replace(new RegExp('{'+ key +'}', 'g'), data[key]);
-  });
+  var key;
+
+  while (key = /{[^{]+?}/gm.exec(template)) {
+    template = template.replace(key, dot.get(data, key.slice(1, -1)));
+  }
 
   return template;
 });

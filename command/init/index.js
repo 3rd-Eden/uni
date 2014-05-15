@@ -1,6 +1,7 @@
 'use strict';
 
-var Uni = require('../../')
+var prompter = require('prompter')
+  , Uni = require('../../')
   , path = require('path')
   , fs = require('fs')
   , os = require('os');
@@ -18,8 +19,16 @@ module.exports = Uni.Command.extend({
       fs.readFile(this.file, function read(err, content) {
         if (err || !content.length) return next();
 
-        try { command.data = JSON.parse(content); }
+        var data = {};
+
+        try { data = JSON.parse(content); }
         catch (e) { /* ignore the error, we assume empty file */ }
+
+        //
+        // Add more sane defaults for when data does not exists
+        //
+        data.name = data.name || path.dirname(command.filename);
+        data.version = data.version || '0.0.0';
 
         next();
       }, 'utf-8');
@@ -68,6 +77,16 @@ module.exports = Uni.Command.extend({
     install: function install() {
 
     },
+
+    //
+    // Step 5: If it's a completely new folder we also want to initialize git in
+    // the given folder.
+    //
+    git: function init() {
+      if (!~this.git().show().output.indexOf('not a git')) return;
+
+      this.git().init();
+    }
   },
 
   /**
@@ -92,6 +111,25 @@ module.exports = Uni.Command.extend({
    * @public
    */
   file: path.join(process.cwd(), 'package.json'),
+
+  /**
+   * Base template for package.json
+   *
+   * @type {Object}
+   * @private
+   */
+  base: {
+    name: '{name}',
+    version: '{version}',
+    description: '{description}',
+    script: {
+      test: '{script.test}'
+    },
+    devDependencies: '{devDependencies}',
+    dependencies: '{dependencies}',
+    peerDependencies: '{peerDependencies}',
+    bundledDependencies: '{bundledDependencies}'
+  },
 
   /**
    * The contents of a `package.json`

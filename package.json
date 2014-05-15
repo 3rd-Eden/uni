@@ -31,11 +31,13 @@
   "dependencies": {
     "argh": "0.1.x",
     "debug": "0.8.x",
+    "dot-component": "0.1.x",
     "eventemitter3": "0.1.x",
     "fusing": "0.2.x",
     "githulk": "0.1.x",
     "natural": "0.1.x",
     "npm-registry": "0.1.x",
+    "prompt-for": "0.4.x",
     "shelljs": "0.3.x"
   },
   "bin": {
