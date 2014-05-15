@@ -15,7 +15,7 @@ var Clone = module.exports = Uni.Command.extend({
   description: 'clone and initialize a git repository',
 
   /**
-   * The command line switches/flags that this command is responding to listed
+   * The command line switches/flags that this command is responding to. Listed
    * as flag->description / key->value.
    *
    * @type {Object}

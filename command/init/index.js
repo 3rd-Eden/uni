@@ -1,12 +1,17 @@
 'use strict';
 
-var prompter = require('prompter')
-  , Uni = require('../../')
+var Uni = require('../../')
   , path = require('path')
   , fs = require('fs')
   , os = require('os');
 
 module.exports = Uni.Command.extend({
+  /**
+   * Description of the command. Which is initializing a new empty folder.
+   *
+   * @type {String}
+   * @public
+   */
   description: 'interactively create a package.json file',
 
   steps: {

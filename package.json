@@ -37,7 +37,6 @@
     "githulk": "0.1.x",
     "natural": "0.1.x",
     "npm-registry": "0.1.x",
-    "prompt-for": "0.4.x",
     "shelljs": "0.3.x"
   },
   "bin": {
