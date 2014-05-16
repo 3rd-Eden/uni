@@ -33,9 +33,10 @@ module.exports = Uni.Command.extend({
     // given directory.
     //
     execute: function execute(next) {
-      if (!this.uni.argv.lengh) return next();
+      if (!this.uni.argv.length) return next();
 
-      var run = this.uni.argv.shift();
+      var run = this.uni.argv.join(' ');
+
       this.iterate({ git: this.uni.flags.git }, function folder(dir, next) {
         this.shelly.exec(run, { silent: this.uni.flags.silent }, next);
       }, next);
@@ -70,8 +71,7 @@ module.exports = Uni.Command.extend({
    * @api private
    */
   iterate: function iterate(options, fn, done) {
-    var dirs = this.dirs = this.dirs || fs.readdirSync(this.uni.cwd)
-      , uni = this.uni
+    var uni = this.uni
       , command = this
       , cwd = uni.cwd;
 
@@ -81,26 +81,40 @@ module.exports = Uni.Command.extend({
       options = null;
     }
 
+    //
+    // Try to cache the directory lookup for the current directory as we might
+    // be iterating over it multiple times.
+    //
+    var dirs = this.dirs = !this.dirs.length
+      ? fs.readdirSync(this.uni.cwd)
+      : this.dirs;
+
     options = options || {};
 
     (function each(index) {
-      var dir = dirs[index++]
-        , full = path.join(uni.cwd, dir);
+      //
+      // Reset the current working directory for each iteration so we have
+      // a clean state to begin with.
+      //
+      command.shelly.cd(uni.cwd = cwd);
 
-      if (!dir) {
-        command.shelly.cd(uni.cwd = cwd);
-        return done();
-      }
+      var dir = dirs[index++]
+        , full;
+
+      if (!dir) return done();
+
+      full = path.join(uni.cwd, dir);
 
       if (
            options.git
         && (
-             !fs.existsSync(path.join(uni.cwd, dir, '.git'))
-          || !fs.statSync(path.join(uni.cwd, dir, '.git')).isDirectory()
+             !fs.existsSync(path.join(full, '.git'))
+          || !fs.statSync(path.join(full, '.git')).isDirectory()
         )
       ) return each(index);
 
       command.shelly.cd(uni.cwd = full);
+
       fn.call(command, full, function next(err) {
         if (err) {
           command.shelly.cd(uni.cwd = cwd);
@@ -112,5 +126,11 @@ module.exports = Uni.Command.extend({
     }(0));
   },
 
+  /**
+   * Cached listing of directories.
+   *
+   * @type {Array}
+   * @private
+   */
   dirs: []
 });
