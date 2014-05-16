@@ -45,7 +45,7 @@ module.exports = Uni.Command.extend({
 
       var run = this.uni.argv.join(' ');
 
-      this.iterate({ git: this.uni.flag.git }, function folder(dir, next) {
+      this.iterate({ git: this.uni.flag.git }, function folder(location, next) {
         this.shelly.exec(run, { silent: !!this.uni.flag.silence }, next);
       }, next);
     },
@@ -53,8 +53,9 @@ module.exports = Uni.Command.extend({
     sync: function sync(next) {
       if (!this.uni.flag.sync) return next();
 
-      this.iterate({ git: true }, function folder(dir, next) {
-        var ref = this.git().symbolicRef('HEAD') || this.git().revParse('--short HEAD');
+      this.iterate({ git: true }, function folder(location, next) {
+        var ref = (this.git().symbolicRef('HEAD') || this.git().revParse('--short HEAD')).trim();
+        next();
       }, next);
     },
 
@@ -65,8 +66,15 @@ module.exports = Uni.Command.extend({
     changes: function changes(next) {
       if (!this.uni.flag.changes) return next();
 
-      this.iterate({ git: true }, function folder(dir, next) {
-        var ref = this.git().status('-s');
+      this.iterate({ git: true }, function folder(location, next) {
+        var ref = (this.git().symbolicRef('HEAD') || this.git().revParse('--short HEAD')).trim()
+          , ahead = this.git().log('origin/'+ ref.split('/').pop() +'..HEAD')
+          , status = this.git().status('--porcelain');
+
+        if (status) console.log(location.dir, 'has unstaged changes');
+        if (ahead) console.log(location.dir, 'is a head of remote', ahead.split('\n').shift().trim());
+
+        next();
       }, next);
     }
   },
@@ -127,7 +135,7 @@ module.exports = Uni.Command.extend({
 
       command.shelly.cd(uni.cwd = full);
 
-      fn.call(command, full, function next(err) {
+      fn.call(command, { full: full, dir: dir }, function next(err) {
         if (err) {
           command.shelly.cd(uni.cwd = cwd);
           return done(err);
