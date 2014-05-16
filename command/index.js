@@ -116,6 +116,7 @@ CMD.readable('replace', function replace(template, data) {
   var key;
 
   while (key = /{[^{]+?}/gm.exec(template)) {
+    key = key[0];
     template = template.replace(key, dot.get(data, key.slice(1, -1)));
   }
 
