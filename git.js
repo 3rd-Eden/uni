@@ -42,11 +42,26 @@ exec('git help -a', {
 }).map(function map(line) {
   return line.trim();
 }).forEach(function each(cmd) {
+  var method = cmd
+    , index;
+
+  //
+  // Some these methods contain dashes, it's a pain to write git()['symbolic-ref']
+  // so we're transforming these cases to JS compatible method name.
+  //
+  while (~(index = method.indexOf('-'))) {
+    method = [
+      method.slice(0, index),
+      method.slice(index + 1, index + 2).toUpperCase(),
+      method.slice(index + 2)
+    ].join('');
+  }
+
   //
   // Introduce each of the parsed commands as a readable method on the
   // prototype. If parameters are required.
   //
-  Git.readable(cmd, function proxycmd(params, fn) {
+  Git.readable(method, function proxycmd(params, fn) {
     var git = 'git '+ cmd +' ';
 
     if ('function' === typeof params) fn = params;
