@@ -14,6 +14,14 @@ module.exports = Uni.Command.extend({
   description: 'execute commands for each folder',
 
   /**
+   * Command usage information.
+   *
+   * @type {String}
+   * @public
+   */
+  usage: 'uni each [flags] -- [command]',
+
+  /**
    * The command line switches/flags that this command is responding to. Listed
    * as flag->description / key->value. These flags are pre-build iterations
    * that could be useful for others.
@@ -37,24 +45,28 @@ module.exports = Uni.Command.extend({
 
       var run = this.uni.argv.join(' ');
 
-      this.iterate({ git: this.uni.flags.git }, function folder(dir, next) {
-        this.shelly.exec(run, { silent: this.uni.flags.silent }, next);
+      this.iterate({ git: this.uni.flag.git }, function folder(dir, next) {
+        this.shelly.exec(run, { silent: !!this.uni.flag.silence }, next);
       }, next);
     },
 
     sync: function sync(next) {
-      if (!this.uni.flags.sync) return next();
+      if (!this.uni.flag.sync) return next();
 
       this.iterate({ git: true }, function folder(dir, next) {
-
+        var ref = this.git().symbolicRef('HEAD') || this.git().revParse('--short HEAD');
       }, next);
     },
 
+    //
+    // Step 3: Check if there are any changes in the directory when the
+    // --changes flag has been used.
+    //
     changes: function changes(next) {
-      if (!this.uni.flags.changes) return next();
+      if (!this.uni.flag.changes) return next();
 
       this.iterate({ git: true }, function folder(dir, next) {
-
+        var ref = this.git().status('-s');
       }, next);
     }
   },
