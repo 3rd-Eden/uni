@@ -22,7 +22,7 @@ module.exports = Help.extend({
 
       var key = this.uni.argv[0];
 
-      this.log(key, this.uni.conf.get(key));
+      this.log(key +': '+ this.uni.conf.get(key));
     },
 
     //
@@ -35,7 +35,7 @@ module.exports = Help.extend({
         , value = this.uni.argv[1];
 
       this.uni.conf.set(key, value);
-      this.log(key, value);
+      this.log(key +': '+ value);
     },
 
     //
@@ -44,7 +44,7 @@ module.exports = Help.extend({
     list: function list() {
       var uni = this.uni;
 
-      if (!uni.flag.list) return;
+      if (!uni.flag.list && uni.argv.length) return;
 
       var cols = +uni.conf.get('cols')
         , values = []
