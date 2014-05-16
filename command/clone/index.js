@@ -114,8 +114,8 @@ var Clone = module.exports = Uni.Command.extend({
     //
     // Step 2: Clone the git repository so we got something to initialize.
     //
-    clone: function clone() {
-      this.git().clone([this.url].concat(this.uni.flag.argv).join(' ').trim());
+    clone: function clone(next) {
+      this.git().clone([this.url].concat(this.uni.flag.argv).join(' ').trim(), next);
     },
 
     //
@@ -134,7 +134,7 @@ var Clone = module.exports = Uni.Command.extend({
     // Step 4: Detect if there's a `package.json` in the directory and install
     // the dependencies.
     //
-    install: function npm() {
+    install: function npm(next) {
       var project = this.githulk.project(this.url)
         , registry = this.uni.conf.get('registry')
         , directory = path.join(this.uni.cwd, project.repo)
@@ -147,7 +147,7 @@ var Clone = module.exports = Uni.Command.extend({
       // installation process.
       //
       try { json = require(path.join(directory, 'package.json')); }
-      catch (e) { return; }
+      catch (e) { return next(); }
 
       //
       // The registry in our configuration has a trailing slash as it's required
@@ -161,6 +161,7 @@ var Clone = module.exports = Uni.Command.extend({
         silent: false
       });
       this.shelly.popd();
+      next();
     }
   },
 
