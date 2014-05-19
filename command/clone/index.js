@@ -154,7 +154,7 @@ var Clone = module.exports = Uni.Command.extend({
       // for our npm-registry module but the npm cli client requires it without
       // a slash.
       //
-      registry = registry.slice(0, -1);
+      if (/\/$/.test(registry)) registry = registry.slice(0, -1);
 
       this.shelly.pushd(project.repo);
       this.shelly.exec('npm install --always-auth --no-strict-ssl --reg '+ registry, {
