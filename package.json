@@ -37,6 +37,7 @@
     "githulk": "0.1.x",
     "natural": "0.1.x",
     "npm-registry": "0.1.x",
+    "pathval": "^0.1.1",
     "shelljs": "0.3.x"
   },
   "bin": {
