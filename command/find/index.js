@@ -63,6 +63,8 @@ var Clone = module.exports = Uni.Command.extend({
       this.repos = this.repos.filter(function each(repo) {
         if (!repo.content) return false;
 
+        var accepted;
+
         //
         // A failed parse of JSON automatically indicates a bad JSON so we
         // cannot query against it.
@@ -74,19 +76,21 @@ var Clone = module.exports = Uni.Command.extend({
 
         if (value) {
           if (semver.validRange(value)) {
-            try { return semver.satisfies(repo.value, value); }
-            catch (e) { return false; }
+            try { accepted = semver.satisfies(repo.value, value); }
+            catch (e) { accepted = false; }
           } else {
-            return JSON.stringify(
+            accepted = JSON.stringify(
               repo.value
             ).toLowerCase() === JSON.stringify(
               value
             ).toLowerCase();
           }
+        } else {
+          accepted = repo.value !== undefined;
         }
 
-        if (not) return repo.value === undefined;
-        return repo.value !== undefined;
+        if (not) return !accepted;
+        return accepted;
       });
     },
 
