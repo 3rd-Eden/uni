@@ -50,6 +50,10 @@ module.exports = Uni.Command.extend({
       }, next);
     },
 
+    //
+    // Step 2: Check if all the repositories are in sync with their upstream
+    // branches when the --sync flag is used.
+    //
     sync: function sync(next) {
       if (!this.uni.flag.sync) return next();
 
