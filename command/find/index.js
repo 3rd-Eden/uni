@@ -1,6 +1,7 @@
 'use strict';
 
 var pathval = require('pathval')
+  , semver = require('semver')
   , Uni = require('../../')
   , path = require('path')
   , fs = require('fs');
@@ -25,7 +26,8 @@ var Clone = module.exports = Uni.Command.extend({
 
   steps: {
     //
-    // Step 1: Find all repositories with a package.json
+    // Step 1: Find all repositories and look up the `package.json` files in
+    // each of these repositories.
     //
     find: function url(next) {
       var command = this
@@ -44,10 +46,19 @@ var Clone = module.exports = Uni.Command.extend({
     },
 
     //
-    // Step 2: filter our
+    // Step 2: Filter out the repositories that don't have a package.json or
+    // don't have a valid package.json
     //
     filter: function filter() {
-      var query = this.uni.flag.argv.shift();
+      var query = this.uni.flag.argv.shift()
+        , value = this.uni.flag.argv.join(' ')
+        , not = query.charAt(0) === '!';
+
+      //
+      // Remove the `!` character so we can see which repositories do NOT satisfy
+      // our given query.
+      //
+      if (not) query = query.slice(1);
 
       this.repos = this.repos.filter(function each(repo) {
         if (!repo.content) return false;
@@ -60,10 +71,28 @@ var Clone = module.exports = Uni.Command.extend({
         catch (e) { return false; }
 
         repo.value = pathval.get(repo.json, query);
+
+        if (value) {
+          if (semver.validRange(value)) {
+            try { return semver.satisfies(repo.value, value); }
+            catch (e) { return false; }
+          } else {
+            return JSON.stringify(
+              repo.value
+            ).toLowerCase() === JSON.stringify(
+              value
+            ).toLowerCase();
+          }
+        }
+
+        if (not) return repo.value === undefined;
         return repo.value !== undefined;
       });
     },
 
+    //
+    // Step 3: Output the repositories that matched our query.
+    //
     match: function match() {
       console.log('The following repositories match: \n');
       console.log(this.repos.map(function map(repo) {
