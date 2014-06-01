@@ -49,7 +49,23 @@ var x = exec('npm -l', {
   }
 
   NPM.readable(method, function proxycmd(params, fn) {
-    var npm = 'npm '+ cmd +' ';
+    var npm = 'npm '+ cmd +' --always-auth --no-strict-ssl'
+      , uni = this.uni;
+
+    //
+    // Add default CLI flags to the command.
+    //
+    if (uni.conf.get('username')) {
+      npm +='--username '+ uni.conf.get('username') +' ';
+    }
+
+    if (uni.conf.get('password')) {
+      npm +='--password '+ uni.conf.get('password') +' ';
+    }
+
+    if (uni.conf.get('registry')) {
+      npm +='--registry '+ uni.conf.get('registry') +' ';
+    }
 
     if ('function' === typeof params) fn = params;
     if ('string' === typeof params) npm += params;
