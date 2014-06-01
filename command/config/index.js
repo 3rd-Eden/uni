@@ -12,6 +12,16 @@ module.exports = Help.extend({
    */
   description: 'set/get or list configuration values',
 
+  /**
+   * Configuration flags that can be used for this command.
+   *
+   * @type {Object}
+   * @public
+   */
+  flags: {
+    '--delete': 'Delete the configuration value, restoring it to the default value'
+  },
+
   steps: {
     //
     // Step 1: Are we a get operation? Then we only need to show the current
@@ -21,6 +31,11 @@ module.exports = Help.extend({
       if (this.uni.argv.length !== 1) return;
 
       var key = this.uni.argv[0];
+
+      if (this.uni.flag.delete) {
+        this.uni.conf.del(key);
+        return this.log(key +': has been removed or restored to the default value');
+      }
 
       this.log(key +': '+ this.uni.conf.get(key));
     },
