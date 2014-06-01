@@ -1,8 +1,10 @@
 'use strict';
 
-var fuse = require('fusing')
+var crypto = require('crypto')
+  , fuse = require('fusing')
   , path = require('path')
-  , fs = require('fs');
+  , fs = require('fs')
+  , os = require('os');
 
 /**
  * Simple local storage for the configuration.
@@ -18,8 +20,17 @@ function LocalStorage(name) {
 
   this.defaults = this.read(path.join(__dirname, '.uni.json'));
   this.home = process.env.HOME || process.env.USERPROFILE;
+  this.passphrase = this.ssh() || os.hostname();
+  this.parsers = Object.create(null);
   this.filename = '.'+ name;
   this.prefix = '$';
+
+  //
+  // Inherit our default parsers.
+  //
+  for (var key in LocalStorage.parsers) {
+    this.parsers[key] = LocalStorage.parsers[key];
+  }
 
   this.load();
 }
@@ -36,6 +47,20 @@ fuse(LocalStorage);
  */
 LocalStorage.readable('key', function key(name) {
   return this.prefix + name;
+});
+
+/**
+ * Get the private ssh key which we can use the hash passwords in a way that
+ * nobody read the passwords from the configuration file.
+ *
+ * @returns {String} Private ssh key.
+ * @api private
+ */
+LocalStorage.readable('ssh', function ssh() {
+  var key = path.join(this.home, '.ssh', 'id_rsa');
+
+  if (!fs.existsSync(key)) return '';
+  return fs.readFileSync(key);
 });
 
 /**
@@ -68,7 +93,13 @@ LocalStorage.readable('file', function file() {
  * @api public
  */
 LocalStorage.readable('get', function get(key) {
-  return this.data[this.key(key)];
+  var data = this.data[this.key(key)];
+
+  if (key in this.parsers && data) {
+    data = this.parsers[key].call(this, 'get', data);
+  }
+
+  return data;
 });
 
 /**
@@ -80,9 +111,11 @@ LocalStorage.readable('get', function get(key) {
  * @api public
  */
 LocalStorage.readable('set', function set(key, data) {
-  key = this.key(key);
+  if (key in this.parsers && data) {
+    data = this.parsers[key].call(this, 'set', data);
+  }
 
-  this.data[key] = data;
+  this.data[this.key(key)] = data;
   return this.save();
 });
 
@@ -141,9 +174,8 @@ LocalStorage.readable('read', function read(file) {
  * @api public
  */
 LocalStorage.readable('del', function del(key) {
-  key = this.key(key);
+  delete this.data[this.key(key)];
 
-  delete this.data[key];
   return this.save();
 });
 
@@ -161,6 +193,41 @@ LocalStorage.readable('destroy', function destroy() {
 
   return this;
 });
+
+/**
+ * Default value parsers.
+ *
+ * @type {Object}
+ * @public
+ */
+LocalStorage.parsers = {
+  /**
+   * Encode and decode passwords.
+   *
+   * @param {String} method Method name.
+   * @param {String} data Resolved data.
+   * @returns {String} Encoded or decoded password.
+   * @api private
+   */
+  password: function password(method, data) {
+    var cipher;
+
+    if ('get' === method) {
+      cipher = crypto.createCipher(
+        this.get('algorithm'), this.passphrase
+      );
+    } else {
+      cipher = crypto.createDecipher(
+        this.get('algorithm'), this.passphrase
+      );
+    }
+
+    data = cipher.update(data, 'ascii', 'base64');
+    data += cipher.final('base64');
+
+    return data;
+  }
+};
 
 //
 // Expose the module.
