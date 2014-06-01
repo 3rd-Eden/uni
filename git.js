@@ -15,11 +15,13 @@ var exec = require('shelljs').exec
  * ```
  *
  * @constructor
+ * @param {Uni} uni Uni instance.
  * @api public
  */
-function Git() {
- if (!(this instanceof Git)) return new Git();
+function Git(uni) {
+ if (!(this instanceof Git)) return new Git(uni);
 
+ this.uni = uni;
  this.fuse();
 }
 

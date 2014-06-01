@@ -4,7 +4,9 @@ var Registry = require('npm-registry')
   , dot = require('dot-component')
   , GitHulk = require('githulk')
   , shelly = require('shelljs')
-  , fuse = require('fusing');
+  , fuse = require('fusing')
+  , npm = require('../npm')
+  , git = require('../git');
 
 /**
  * The representation of a single CLI command. The CLI command will execute
@@ -18,6 +20,13 @@ function CMD(uni) {
   if (!(this instanceof CMD)) return new CMD(uni);
 
   this.fuse();
+
+  //
+  // Create a pre-bound git and npm constructor so they have access to the `uni`
+  // instance and can access our uni and the configuration.
+  //
+  this.git = git.bind(git, uni);
+  this.npm = npm.bind(npm, uni);
 
   this.uni = uni;
   this.githulk = new GitHulk({
@@ -44,15 +53,6 @@ CMD.writable('steps', {});
  */
 shelly.config.silent = true;
 CMD.readable('shelly', shelly);
-
-/**
- * A simple interface for the git api which allows sync as well as async
- * invocation.
- *
- * @type {Function}
- * @public
- */
-CMD.readable('git', require('../git'));
 
 /**
  * Execute the various of execution steps of a given command.
