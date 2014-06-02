@@ -216,14 +216,17 @@ LocalStorage.parsers = {
       cipher = crypto.createCipher(
         this.get('algorithm'), this.passphrase
       );
+
+      data = cipher.update(data, 'base64', 'ascii');
+      data += cipher.final('ascii');
     } else {
       cipher = crypto.createDecipher(
         this.get('algorithm'), this.passphrase
       );
-    }
 
-    data = cipher.update(data, 'ascii', 'base64');
-    data += cipher.final('base64');
+      data = cipher.update(data, 'ascii', 'base64');
+      data += cipher.final('base64');
+    }
 
     return data;
   }
