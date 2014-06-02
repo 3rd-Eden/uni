@@ -4,5 +4,7 @@
   "github-clone": "The git URL template for when you clone GitHub repositories",
   "token": "Personal GitHub access/authorization token which is used to communicate with the API",
   "cols": "Maximum length of the console output",
-  "algorithm": "The cypher algorithm that is used en/decode passwords in your config"
+  "algorithm": "The cipher algorithm that is used en/decode passwords in your config",
+  "password": "The password of your npm account",
+  "username": "The username of your npm account"
 }

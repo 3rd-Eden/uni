@@ -103,6 +103,24 @@ LocalStorage.readable('get', function get(key) {
 });
 
 /**
+ * Same as get, but it renders the value suitable for CLI. It can be that
+ * certain values need to be masked.
+ *
+ * @param {String} key The key we search for.
+ * @returns {String} CLI output
+ * @api public
+ */
+LocalStorage.readable('render', function render(key) {
+  var data = this.get(key);
+
+  if (key in this.parsers && data) {
+    data = this.parsers[key].call(this, 'render', data);
+  }
+
+  return data.toString();
+});
+
+/**
  * Add a new item to the storage file.
  *
  * @param {String} key The key we store the value on.
@@ -212,20 +230,28 @@ LocalStorage.parsers = {
   password: function password(method, data) {
     var cipher;
 
-    if ('get' === method) {
-      cipher = crypto.createCipher(
-        this.get('algorithm'), this.passphrase
-      );
+    switch (method) {
+      case 'get':
+        cipher = crypto.createCipher(
+          this.get('algorithm'), this.passphrase
+        );
 
-      data = cipher.update(data, 'base64', 'ascii');
-      data += cipher.final('ascii');
-    } else {
-      cipher = crypto.createDecipher(
-        this.get('algorithm'), this.passphrase
-      );
+        data = cipher.update(data, 'base64', 'ascii');
+        data += cipher.final('ascii');
+      break;
 
-      data = cipher.update(data, 'ascii', 'base64');
-      data += cipher.final('base64');
+      case 'set':
+        cipher = crypto.createDecipher(
+          this.get('algorithm'), this.passphrase
+        );
+
+        data = cipher.update(data, 'ascii', 'base64');
+        data += cipher.final('base64');
+      break;
+
+      case 'render':
+        if (data) data = (new Array(10)).join('*');
+      break;
     }
 
     return data;

@@ -37,7 +37,7 @@ module.exports = Help.extend({
         return this.log(key +': has been removed or restored to the default value');
       }
 
-      this.log(key +': '+ this.uni.conf.get(key));
+      this.log(key +': '+ this.uni.conf.render(key));
     },
 
     //
@@ -91,9 +91,11 @@ module.exports = Help.extend({
       // - Maximum length of the values
       // - Maximum length of the descriptions
       //
-      keys.forEach(function each(key) {
+      keys.sort(function sort(a, b) {
+        return a.localeCompare(b);
+      }).forEach(function each(key) {
         var description = this.descriptions[key] || ''
-          , value = uni.conf.get(key).toString()
+          , value = uni.conf.render(key)
           , length = maxdesc;
 
         if (description.length <= length) return this.log([
