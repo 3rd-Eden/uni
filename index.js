@@ -172,6 +172,7 @@ Uni.readable('run', function run() {
   //
   // 404 Command not Found.
   //
+  this.help();
 });
 
 //

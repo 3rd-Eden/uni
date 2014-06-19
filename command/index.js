@@ -29,8 +29,16 @@ function CMD(uni) {
   this.npm = npm.bind(npm, uni);
 
   this.uni = uni;
+
   this.githulk = new GitHulk({
     token: uni.conf.get('token') || process.env.GITHUB || process.env.GITHULK
+  });
+
+  this.registry = new Registry({
+    registry: uni.conf.get('registry') || Registry.mirrors.nodejitsu,
+    username: uni.config.get('username'),
+    password: uni.config.get('password'),
+    githulk: this.githulk
   });
 }
 
