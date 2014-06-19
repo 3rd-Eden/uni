@@ -229,6 +229,25 @@ CMD.readable('help', function halp() {
   this.log(help.join('\n'));
 });
 
+/**
+ * Figure out which repositories we need to return. In GitHub there is no way
+ * of figuring out if a name is a user or organization and they all require
+ * different API calls.
+ *
+ * @param {String} name The name of the user/organization we need to list.
+ * @param {Function} fn Completion callback.
+ * @api private
+ */
+CMD.readable('repositories', function repositories(name, fn) {
+  var githulk = this.githulk;
+
+  githulk.repository.list(name, { organization: true }, function list(err, repos) {
+    if (!err) return fn(err, repos);
+
+    githulk.repository.list(name, fn);
+  });
+});
+
 //
 // Expose the module.
 //

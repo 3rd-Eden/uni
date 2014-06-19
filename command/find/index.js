@@ -33,7 +33,7 @@ var Clone = module.exports = Uni.Command.extend({
       var command = this
         , uni = this.uni;
 
-      this.githulk.repository.list(uni.flag.argv.shift(), function list(err, repos) {
+      this.repositories(uni.flag.argv.shift(), function list(err, repos) {
         command.repos = repos;
         next();
       }).async.map(function map(row, next) {
