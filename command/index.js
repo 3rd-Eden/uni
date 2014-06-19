@@ -36,8 +36,8 @@ function CMD(uni) {
 
   this.registry = new Registry({
     registry: uni.conf.get('registry') || Registry.mirrors.nodejitsu,
-    username: uni.config.get('username'),
-    password: uni.config.get('password'),
+    username: uni.conf.get('username'),
+    password: uni.conf.get('password'),
     githulk: this.githulk
   });
 }

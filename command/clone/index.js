@@ -33,6 +33,14 @@ var Clone = module.exports = Uni.Command.extend({
    */
   usage: 'uni clone [flags] <repo> -- <optional git clone flags>',
 
+  /**
+   * The URL that we need to clone and initialize.
+   *
+   * @type {String}
+   * @public
+   */
+  url: '',
+
   steps: {
     //
     // Step 1: Figure out the URL to the git repository that we need to clone.
@@ -74,7 +82,7 @@ var Clone = module.exports = Uni.Command.extend({
       var command = this
         , uni = this.uni;
 
-      this.githulk.repository.list(this.url, function list(err, repos) {
+      this.repositories(this.url, function list(err, repos) {
         if (err) return next.end(err);
 
         //
@@ -166,10 +174,21 @@ var Clone = module.exports = Uni.Command.extend({
   },
 
   /**
-   * The URL that we need to clone and initialize.
+   * Figure out which repositories we need to return. In GitHub there is no way
+   * of figuring out if a name is a user or organization and they all require
+   * different API calls.
    *
-   * @type {String}
-   * @public
+   * @param {String} name The name of the user/organization we need to list.
+   * @param {Function} fn Completion callback.
+   * @api private
    */
-  url: ''
+  repositories: function repositories(name, fn) {
+    var githulk = this.githulk;
+
+    githulk.repository.list(name, { organization: true }, function list(err, repos) {
+      if (!err) return fn(err, repos);
+
+      githulk.repository.list(name, fn);
+    });
+  }
 });
