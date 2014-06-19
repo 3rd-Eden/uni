@@ -44,7 +44,36 @@ Everything in Uni has been designed to be extendible and configurable so it can
 be fully customized in the way **you** want it to behave. The configuration is
 stored in a `.uni` dot file which placed in the home folder of your user. The
 file is just JSON with prefixed keys. The configuration can be changed and
-updated using the `uni config` command.
+updated using the `uni config` command. 
+
+If you use different laptops you probably want to sync this file automatically
+using Dropbox etc.
+
+Changing the different configuration values within uni is quite easy, the 
+`uni config` command automatically lists all the current configured values with
+a description with what the configuration value does. You can also run 
+`uni config --list`, this yields the same result.
+
+To output the value of one single key you need to run `uni config <key>`. For
+example running:
+
+```
+uni config algorithm
+```
+
+It will return `algorithm: rc4` where `rc4` is the value that is configured for
+the `algorithm` key. To set a value you can simply run `uni config <key> <value>`.
+Please note that you should not use any spaces inside the value as the part
+after a space would not be saved.
+
+To delete values simply use the same command as getting a key but add a
+`--delete` flag at the end of it so we know you want to delete it.
+
+```
+uni config algorithm --delete
+```
+
+### GitHub
 
 As this module leans heavily on interaction with GitHub we make use of their
 developer API. Unfortunately this API is heavily rate limited by the folks over
@@ -61,6 +90,26 @@ Once you've created a token you can either add it as ENV variable in your
 ```
 uni config token <access-token-here>
 ```
+
+### Private registry
+
+```
+uni config password <npm password>
+uni config username <npm username>
+```
+
+Once you've set the username and password of your npm account you can update the
+registry to the location of your own private npm registry:
+
+```
+uni config registry <registry url>
+```
+
+> The password is **NOT** stored in plain text, we hash the password using Node's
+> `createCipher` method and use your private SSH key as password and in the
+> configuration specified algorithm as hashing algorithm. If you do not have the
+> `~/.ssh/id_rsa` file locally we use the host name of your machine as password
+> instead.
 
 ## Available commands
 
@@ -99,6 +148,8 @@ Flags:
   --silence   completely silence the stdout output
   --help      displays help information for a given command
 ```
+
+_Output listed above might differ from the output in your terminal._
 
 ### uni clone
 
