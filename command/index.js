@@ -248,6 +248,44 @@ CMD.readable('repositories', function repositories(name, fn) {
   });
 });
 
+/**
+ * Add a new plugin to the commands.
+ *
+ * @param {String} name Name of the plugin.
+ * @param {String} command List of commands we should add these plugins to.
+ * @param {Function} fn Plugin callback.
+ * @api public
+ */
+CMD.use = function use(name, command, fn) {
+  if ('function' === typeof command) {
+    fn = command;
+    command = '*';
+  }
+
+  //
+  // Prevent duplicate plugins, not like this would ever happen, but still
+  // a good way to warn people about their fuck-ups.
+  //
+  if (name in CMD.plugins) {
+    throw new Error('We already have a plugin registerd under `'+ name +'`');
+  }
+
+  CMD.plugins[name] = {
+    command: new RegExp('^'+ command.replace('*', '.*?') +'$'),
+    plugin: fn
+  };
+
+  return CMD;
+};
+
+/**
+ * The actual plugin registry.
+ *
+ * @type {Object}
+ * @private
+ */
+CMD.plugins = Object.create(null);
+
 //
 // Expose the module.
 //
