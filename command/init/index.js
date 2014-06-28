@@ -7,6 +7,14 @@ var Uni = require('../../')
 
 module.exports = Uni.Command.extend({
   /**
+   * Name of the command.
+   *
+   * @type {String}
+   * @public
+   */
+  name: 'init',
+
+  /**
    * Description of the command. Which is initializing a new empty folder.
    *
    * @type {String}

@@ -6,7 +6,9 @@ var Registry = require('npm-registry')
   , shelly = require('shelljs')
   , fuse = require('fusing')
   , npm = require('../npm')
-  , git = require('../git');
+  , git = require('../git')
+  , path = require('path')
+  , fs = require('fs');
 
 /**
  * The representation of a single CLI command. The CLI command will execute
@@ -40,6 +42,8 @@ function CMD(uni) {
     password: uni.conf.get('password'),
     githulk: this.githulk
   });
+
+  CMD.use.at(this);
 }
 
 fuse(CMD);
@@ -285,6 +289,33 @@ CMD.use = function use(name, command, fn) {
  * @private
  */
 CMD.plugins = Object.create(null);
+
+/**
+ * Load the different plugins.
+ *
+ * @type {Object} name -> plugin
+ * @public
+ */
+var plugins = path.join(__dirname, '..', 'plugins');
+fs.readdirSync(plugins).forEach(function each(name) {
+  CMD.use(name.slice(0, -3), require(path.join(plugins, name)));
+});
+
+/**
+ * Execute the plugins for the given command.
+ *
+ * @param {Command} cmd The command that might need plugins.
+ * @api private
+ */
+CMD.use.at = function at(cmd) {
+  Object.keys(CMD.plugins).filter(function filter(name) {
+    return CMD.plugins[name].regexp.test(cmd.name);
+  }).forEach(function each(name) {
+    CMD.plugins[name].plugin(cmd);
+  });
+
+  return CMD;
+};
 
 //
 // Expose the module.

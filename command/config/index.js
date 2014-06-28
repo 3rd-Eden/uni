@@ -5,6 +5,14 @@ var Help = require('../help')
 
 module.exports = Help.extend({
   /**
+   * The name of the command.
+   *
+   * @type {String}
+   * @public
+   */
+  name: 'config',
+
+  /**
    * Description of the command. Which is a custom configuration.
    *
    * @type {String}

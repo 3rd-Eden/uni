@@ -8,6 +8,14 @@ var pathval = require('pathval')
 
 var Clone = module.exports = Uni.Command.extend({
   /**
+   * Name of command.
+   *
+   * @type {String}
+   * @public
+   */
+  name: 'find',
+
+  /**
    * Description of command. Which in this case is finding repositories based on
    * values in their `package.json` files.
    *

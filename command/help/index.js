@@ -4,6 +4,14 @@ var Uni = require('../../');
 
 module.exports = Uni.Command.extend({
   /**
+   * Name of the command.
+   *
+   * @type {String}
+   * @public
+   */
+  name: 'help',
+
+  /**
    * Description of the command. In this case it's displaying the help
    * information for the command line interface.
    *

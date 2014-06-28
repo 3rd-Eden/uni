@@ -6,6 +6,14 @@ var Uni = require('../../')
 
 module.exports = Uni.Command.extend({
   /**
+   * Name of the command.
+   *
+   * @type {String}
+   * @public
+   */
+  name: 'each',
+
+  /**
    * Description of the command. Which is executing a command for each folder.
    *
    * @type {String}

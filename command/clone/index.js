@@ -6,6 +6,14 @@ var Uni = require('../../')
 
 var Clone = module.exports = Uni.Command.extend({
   /**
+   * Name of the command.
+   *
+   * @type {String}
+   * @public
+   */
+  name: 'init',
+
+  /**
    * Description of command. Which is in this case an improved version of
    * `git clone` which automatically install and initialize all the things.
    *
