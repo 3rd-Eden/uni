@@ -99,6 +99,12 @@ Uni.readable('commands', fs.readdirSync(commands).filter(function filter(folder)
   function factory() {
     factory.Command = factory.Command || require('./command/'+ folder);
 
+    //
+    // Add a name if does not exist. Just to make sure everything is properly
+    // named.
+    //
+    if (!factory.Command.prototype.name) factory.Command.prototype.name = folder;
+
     var command = new factory.Command(this);
     return command.run(function run() {
       console.log('');
