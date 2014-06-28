@@ -275,7 +275,7 @@ CMD.use = function use(name, command, fn) {
   }
 
   CMD.plugins[name] = {
-    command: new RegExp('^'+ command.replace('*', '.*?') +'$'),
+    regexp: new RegExp('^'+ command.replace('*', '.*?') +'$'),
     plugin: fn
   };
 
@@ -297,7 +297,9 @@ CMD.plugins = Object.create(null);
  * @public
  */
 var plugins = path.join(__dirname, '..', 'plugins');
-fs.readdirSync(plugins).forEach(function each(name) {
+fs.readdirSync(plugins).filter(function filter(name) {
+  return name.slice(-3) === '.js';
+}).forEach(function each(name) {
   CMD.use(name.slice(0, -3), require(path.join(plugins, name)));
 });
 
