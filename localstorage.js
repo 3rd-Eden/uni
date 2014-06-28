@@ -117,7 +117,7 @@ LocalStorage.readable('render', function render(key) {
     data = this.parsers[key].call(this, 'render', data);
   }
 
-  return data.toString();
+  return (data || '').toString();
 });
 
 /**
