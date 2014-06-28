@@ -19,7 +19,6 @@ function Uni(name) {
   if (!(this instanceof Uni)) return new Uni(name);
 
   this.fuse();
-
   this.readable('conf', new LocalStorage(name || 'uni'));
 }
 
