@@ -2,6 +2,7 @@
 
 var Registry = require('npm-registry')
   , dot = require('dot-component')
+  , inquirer = require('inquirer')
   , GitHulk = require('githulk')
   , shelly = require('shelljs')
   , fuse = require('fusing')
@@ -33,7 +34,7 @@ function CMD(uni) {
   this.uni = uni;
 
   this.githulk = new GitHulk({
-    token: uni.conf.get('token') || process.env.GITHUB || process.env.GITHULK
+    token: uni.conf.get('token')
   });
 
   this.registry = new Registry({
@@ -65,6 +66,14 @@ CMD.writable('steps', {});
  */
 shelly.config.silent = true;
 CMD.readable('shelly', shelly);
+
+/**
+ * Expose the CLI/promper
+ *
+ * @type {Function}
+ * @public
+ */
+CMD.readable('cli', inquirer);
 
 /**
  * Execute the various of execution steps of a given command.

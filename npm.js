@@ -49,11 +49,20 @@ var x = exec('npm -l', {
   }
 
   NPM.readable(method, function proxycmd(params, fn) {
-    var npm = 'npm '+ cmd +' --always-auth --no-strict-ssl'
+    var npm = 'npm '+ cmd +' '
       , uni = this.uni;
 
+    if ('function' === typeof params) fn = params;
+    if ('string' === typeof params) npm += params;
+
     //
-    // Add default CLI flags to the command.
+    // We have no idea what is added by the user so we need to trim it, and re
+    // add the spacing so our flags are correctly added.
+    //
+    npm = npm.trim() +' ';
+
+    //
+    // Add default CLI flags to the command, which should be last..
     //
     if (uni.conf.get('username')) {
       npm +='--username '+ uni.conf.get('username') +' ';
@@ -67,8 +76,7 @@ var x = exec('npm -l', {
       npm +='--registry '+ uni.conf.get('registry') +' ';
     }
 
-    if ('function' === typeof params) fn = params;
-    if ('string' === typeof params) npm += params;
+    npm +='--always-auth --no-strict-ssl ';
 
     return exec(npm.trim(), { silent: true }, fn).output || '';
   });

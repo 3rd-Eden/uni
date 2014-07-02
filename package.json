@@ -30,14 +30,16 @@
   "homepage": "https://github.com/3rd-Eden/uni",
   "dependencies": {
     "argh": "0.1.x",
+    "async": "^0.9.0",
     "debug": "0.8.x",
     "dot-component": "0.1.x",
     "eventemitter3": "0.1.x",
     "fusing": "0.2.x",
     "githulk": "0.1.x",
+    "inquirer": "^0.5.1",
     "natural": "0.1.x",
     "npm-registry": "0.1.x",
-    "pathval": "^0.1.1",
+    "pathval": "0.1.x",
     "semver": "2.3.x",
     "shelljs": "0.3.x"
   },
