@@ -59,6 +59,7 @@ module.exports = Uni.Command.extend({
         return '  '+ cmd + (new Array(max - cmd.length).join(' ')) + description;
       }));
 
+      this.logo();
       this.log(help.join('\n'));
     }
   }

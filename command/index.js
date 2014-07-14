@@ -5,6 +5,7 @@ var Registry = require('npm-registry')
   , inquirer = require('inquirer')
   , GitHulk = require('githulk')
   , shelly = require('shelljs')
+  , kuler = require('kuler')
   , fuse = require('fusing')
   , npm = require('../npm')
   , git = require('../git')
@@ -239,7 +240,29 @@ CMD.readable('help', function halp() {
     return '  '+ cmd + (new Array(max - cmd.length).join(' ')) + description;
   }));
 
+  this.logo();
   this.log(help.join('\n'));
+});
+
+/**
+ * Output the ASCII logo of uni.
+ *
+ * @api public
+ */
+CMD.readable('logo', function logo() {
+  var lines = [
+      ''
+    , ' _   _ _ __  _ '
+    , '| | | | \\_ \\| |'
+    , '| |_| | | | | |'
+    , ' \\__,_|_| |_|_|'
+    , ''
+  ].map(function each(line) {
+    if (!line.length) return '';
+    return '    '+ kuler(line, '#00FF96');
+  });
+
+  this.log(lines.join('\n'));
 });
 
 /**
