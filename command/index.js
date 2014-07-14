@@ -252,10 +252,10 @@ CMD.readable('help', function halp() {
 CMD.readable('logo', function logo() {
   var lines = [
       ''
-    , ' _   _ _ __  _ '
-    , '| | | | \\_ \\| |'
-    , '| |_| | | | | |'
-    , ' \\__,_|_| |_|_|'
+    , kuler(' _   _ _ __  _ ', '#00FF96')
+    , kuler('| | | | \\_ \\| |', '#00FF96') + '    © 2014 Arnout Kazemier'
+    , kuler('| |_| | | | | |', '#00FF96')   + '    All Rights Reserved - github.com/3rd-Eden/uni'
+    , kuler(' \\__,_|_| |_|_|', '#00FF96')
     , ''
   ].map(function each(line) {
     if (!line.length) return '';
