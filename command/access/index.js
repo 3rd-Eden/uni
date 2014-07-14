@@ -12,7 +12,7 @@ var Clone = module.exports = Uni.Command.extend({
    * @type {String}
    * @public
    */
-  name: 'sync',
+  name: 'access',
 
   /**
    * Description of command. Which is in this case an improved version of
@@ -21,7 +21,7 @@ var Clone = module.exports = Uni.Command.extend({
    * @type {String}
    * @public
    */
-  description: 'keep your npm packages in sync with your github collaborators',
+  description: 'keep your npm packages access in sync with your github collaborators',
 
   /**
    * Command usage information.
@@ -29,7 +29,7 @@ var Clone = module.exports = Uni.Command.extend({
    * @type {String}
    * @public
    */
-  usage: 'uni sync [flags] <username>/<repo>',
+  usage: 'uni access [flags] <username>/<repo>',
 
   /**
    * The command line switches/flags that this command is responding to. Listed
