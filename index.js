@@ -80,8 +80,8 @@ Uni.writable('cwd', process.cwd());
  * @public
  */
 Uni.readable('flags', {
-  '--silence': 'completely silence the stdout output',
-  '--help': 'displays help information for a given command'
+  '--silence': 'Completely silence the stdout output',
+  '--help': 'Displays help information for a given command'
 });
 
 /**
