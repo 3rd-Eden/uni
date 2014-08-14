@@ -27,6 +27,14 @@ function Git(uni) {
 
 fuse(Git);
 
+/**
+ * List of all commands that are available for git.
+ *
+ * @type {Array}
+ * @private
+ */
+Git.commands = [];
+
 exec('git help -a', {
   silent: true
 }).output.split(/([\w|\-]+)\s{2,}/g).filter(function filter(line) {
@@ -71,6 +79,8 @@ exec('git help -a', {
 
     return exec(git.trim(), { silent: true }, fn).output || '';
   });
+
+  Git.commands.push(cmd);
 });
 
 //

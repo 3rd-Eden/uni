@@ -26,6 +26,15 @@ function NPM(uni) {
 
 fuse(NPM);
 
+
+/**
+ * List of all commands that are available for git.
+ *
+ * @type {Array}
+ * @private
+ */
+NPM.commands = [];
+
 var x = exec('npm -l', {
   silent: true
 }).output.split(/[\n|\r]/).map(function map(line) {
@@ -80,6 +89,8 @@ var x = exec('npm -l', {
 
     return exec(npm.trim(), { silent: true }, fn).output || '';
   });
+
+  NPM.commands.push(cmd);
 });
 
 //

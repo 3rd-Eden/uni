@@ -100,9 +100,10 @@ Uni.readable('commands', fs.readdirSync(commands).filter(function filter(folder)
   /**
    * Run the given command.
    *
+   * @param {Mixed} arg Optional first argument.
    * @api private
    */
-  function factory() {
+  function factory(arg) {
     factory.Command = factory.Command || require('./command/'+ folder);
 
     //
@@ -111,7 +112,8 @@ Uni.readable('commands', fs.readdirSync(commands).filter(function filter(folder)
     //
     if (!factory.Command.prototype.name) factory.Command.prototype.name = folder;
 
-    var command = new factory.Command(this);
+    var command = new factory.Command(this, arg);
+
     return command.run(function run() {
       console.log('');
     });
@@ -124,15 +126,17 @@ Uni.readable('commands', fs.readdirSync(commands).filter(function filter(folder)
   factory.name = factory.displayName = name;
 
   //
-  // Add a description property to the factory function so we can read the
-  // description from the prototype.
+  // Add a flags and description property to the factory so we can read the
+  // these values from the prototype.
   //
-  Object.defineProperty(factory, 'description', {
-    get: function get() {
-      factory.Command = factory.Command || require('./command/'+ folder);
+  ['description', 'flags'].forEach(function proxy(property) {
+    Object.defineProperty(factory, property, {
+      get: function get() {
+        factory.Command = factory.Command || require('./command/'+ folder);
 
-      return factory.Command.prototype.description;
-    }
+        return factory.Command.prototype[property];
+      }
+    });
   });
 
   //
@@ -180,10 +184,19 @@ Uni.readable('run', function run() {
   //
   if (command) return this[command]();
 
+  var npm = require('./npm')
+    , git = require('./git');
+
+  //
+  // Check if we can somehow proxy the command to git or npm.
+  //
+  if (~npm.commands.indexOf(command)) return npm.proxy(this);
+  if (~git.commands.indexOf(command)) return git.proxy(this);
+
   //
   // 404 Command not Found.
   //
-  this.help();
+  this.help(404);
 });
 
 //
