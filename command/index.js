@@ -18,10 +18,11 @@ var Registry = require('npm-registry')
  *
  * @constructor
  * @param {Uni} uni Uni instance that used this command.
+ * @param {Mixed} options Optional options.
  * @api public
  */
-function CMD(uni) {
-  if (!(this instanceof CMD)) return new CMD(uni);
+function CMD(uni, options) {
+  if (!(this instanceof CMD)) return new CMD(uni, options);
 
   this.fuse();
 
@@ -44,6 +45,10 @@ function CMD(uni) {
     password: uni.conf.get('password'),
     githulk: this.githulk
   });
+
+  if (options) {
+    this.options = options || this.options;
+  }
 
   CMD.use.at(this);
 }

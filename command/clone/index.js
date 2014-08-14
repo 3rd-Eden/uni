@@ -20,7 +20,7 @@ var Clone = module.exports = Uni.Command.extend({
    * @type {String}
    * @public
    */
-  description: 'clone and initialize a git repository',
+  description: 'Clone and initialize a git repository',
 
   /**
    * The command line switches/flags that this command is responding to. Listed
@@ -30,7 +30,7 @@ var Clone = module.exports = Uni.Command.extend({
    * @public
    */
   flags: {
-    '--create': 'create the folder of the user/orgs to clone the repositories in'
+    '--create': 'Create the folder of the user/orgs to clone the repositories in'
   },
 
   /**

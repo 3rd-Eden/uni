@@ -19,7 +19,7 @@ module.exports = Uni.Command.extend({
    * @type {String}
    * @public
    */
-  description: 'execute commands for each folder',
+  description: 'Execute commands for each folder',
 
   /**
    * Command usage information.
@@ -38,9 +38,9 @@ module.exports = Uni.Command.extend({
    * @public
    */
   flags: {
-    '--sync': 'check if each given git repository is up to date',
-    '--changes': 'check if each git repository has any unstaged changes',
-    '--git': 'only execute the given command on git repositories'
+    '--sync': 'Check if each given git repository is up to date',
+    '--changes': 'Check if each git repository has any unstaged changes',
+    '--git': 'Only execute the given command on git repositories'
   },
 
   steps: {

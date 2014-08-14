@@ -1,6 +1,7 @@
 'use strict';
 
-var Uni = require('../../');
+var Uni = require('../../')
+  , kuler = require('kuler');
 
 module.exports = Uni.Command.extend({
   /**
@@ -18,7 +19,18 @@ module.exports = Uni.Command.extend({
    * @type {String}
    * @public
    */
-  description: 'displays this help message',
+  description: 'Displays this help message',
+
+  /**
+   * The command line switches/flags that this command is responding to. Listed
+   * as flag->description / key->value.
+   *
+   * @type {Object}
+   * @public
+   */
+  flags: {
+    '--verbose': 'Also output all the help information for each command'
+  },
 
   /**
    * The command line usage instructions.
@@ -34,6 +46,7 @@ module.exports = Uni.Command.extend({
     //
     output: function output() {
       var uni = this.uni
+        , command = this
         , flags = Object.keys(uni.flags)
         , max = this.max(uni.commands.concat(flags)) + 4
         , help = ['Usage: uni [command] [flags]', '', 'Commands:', ''];
@@ -44,9 +57,24 @@ module.exports = Uni.Command.extend({
       // same length as the longest command.
       //
       help.push.apply(help, uni.commands.map(function map(cmd) {
-        var description = uni[cmd].description;
+        var line = '  '+ cmd + (new Array(max - cmd.length).join(' '))
+          , description = uni[cmd].description
+          , flags = uni[cmd].flags;
 
-        return '  '+ cmd + (new Array(max - cmd.length).join(' ')) + description;
+        line += uni[cmd].description;
+
+        if (uni.flag.verbose && flags) {
+          var fmax = command.max(Object.keys(flags)) + 4;
+
+          line += '\n'+ Object.keys(flags).map(function each(flag) {
+            return (new Array(max + 2)).join(' ')
+              + kuler(flag, '#888888')
+              + (new Array(fmax - flag.length).join(' '))
+              + kuler(flags[flag], '#888888');
+          }).join('\n') + '\n';
+        }
+
+        return line;
       }));
 
       help.push('');

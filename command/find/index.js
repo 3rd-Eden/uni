@@ -22,7 +22,7 @@ var Clone = module.exports = Uni.Command.extend({
    * @type {String}
    * @public
    */
-  description: 'find repositories based on package.json fields',
+  description: 'Find repositories based on package.json fields',
 
   /**
    * The usage information for this given command.

@@ -20,7 +20,7 @@ module.exports = Uni.Command.extend({
    * @type {String}
    * @public
    */
-  description: 'interactively create a package.json file',
+  description: 'Interactively create a package.json file',
 
   steps: {
     //

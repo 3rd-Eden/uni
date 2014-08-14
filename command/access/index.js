@@ -21,7 +21,7 @@ var Clone = module.exports = Uni.Command.extend({
    * @type {String}
    * @public
    */
-  description: 'keep your npm packages access in sync with your github collaborators',
+  description: 'Keep your npm packages access in sync with your github collaborators',
 
   /**
    * Command usage information.
