@@ -190,8 +190,8 @@ Uni.readable('run', function run() {
   //
   // Check if we can somehow proxy the command to git or npm.
   //
-  if (~npm.commands.indexOf(command)) return npm.proxy(this);
-  if (~git.commands.indexOf(command)) return git.proxy(this);
+  if (~npm.commands.indexOf(uni.command)) return npm.proxy(this);
+  if (~git.commands.indexOf(uni.command)) return git.proxy(this);
 
   //
   // 404 Command not Found.
