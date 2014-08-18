@@ -26,7 +26,6 @@ function NPM(uni) {
 
 fuse(NPM);
 
-
 /**
  * List of all commands that are available for git.
  *
