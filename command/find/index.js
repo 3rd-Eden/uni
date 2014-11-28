@@ -111,6 +111,8 @@ var Clone = module.exports = Uni.Command.extend({
     // Step 3: Output the repositories that matched our query.
     //
     match: function match() {
+      if (!this.repos.length) return console.log('No matching repositories!');
+
       console.log('The following repositories match: \n');
       console.log(this.repos.map(function map(repo) {
         return repo.id;
