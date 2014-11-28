@@ -2,6 +2,7 @@
 
 var pathval = require('pathval')
   , semver = require('semver')
+  , async = require('async')
   , Uni = require('../../')
   , path = require('path')
   , fs = require('fs');
@@ -42,13 +43,17 @@ var Clone = module.exports = Uni.Command.extend({
         , uni = this.uni;
 
       this.repositories(uni.flag.argv.shift(), function list(err, repos) {
-        command.repos = repos;
-        next();
-      }).async.map(function map(row, next) {
-        command.githulk.repository.raw(row.full_name, {
-          path: 'package.json'
-        }, function raw(err, content) {
-          next(undefined, { id: row.full_name, content: content });
+        if (err) return next(err);
+
+        async.map(repos, function map(row, next) {
+          command.githulk.repository.raw(row.full_name, {
+            path: 'package.json'
+          }, function raw(err, content) {
+            next(undefined, { id: row.full_name, content: content });
+          });
+        }, function done(err, repos) {
+          command.repos = repos;
+          next(err);
         });
       });
     },
