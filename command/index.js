@@ -205,7 +205,11 @@ CMD.readable('each', function each(array, process, fn) {
  * @api public
  */
 CMD.readable('log', function log(line) {
-  if (!this.uni.flag.silence) console.log(line);
+  if (!this.uni.flag.silence) {
+    console.log(line);
+  }
+
+  return this;
 });
 
 /**
@@ -214,6 +218,7 @@ CMD.readable('log', function log(line) {
  *
  * @param {Array} arr The array with items we should should scan
  * @returns {Number} Max length
+ * @api public
  */
 CMD.readable('max', function max(arr) {
   return Math.max.apply(Math, arr.map(function map(value) {
@@ -247,6 +252,8 @@ CMD.readable('help', function halp() {
 
   this.logo();
   this.log(help.join('\n'));
+
+  return this;
 });
 
 /**
@@ -268,6 +275,7 @@ CMD.readable('logo', function logo() {
   });
 
   this.log(lines.join('\n'));
+  return this;
 });
 
 /**
@@ -287,6 +295,49 @@ CMD.readable('repositories', function repositories(name, fn) {
 
     githulk.repository.list(name, fn);
   });
+
+  return this;
+});
+
+/**
+ * Get a projects based on a given input. We want give users the flexibility
+ * they deserve so we allow the following:
+ *
+ * - user/foo: The foo project will only be returned.
+ * - user/{foo, bar, banana}: The projects foo, bar, banana will be returned.
+ * - user: All projects for the given name as listed.
+ *
+ * @param {Object|String} github Parsed github details or a user/repo string.
+ * @param {Function} fn Completion callback.
+ * @returns {CMD}
+ * @api public
+ */
+CMD.readable('projects', function projects(github, fn) {
+  var expand = /\{([^\{]+?)\}/g
+    , list = [];
+
+  //
+  // Make sure that we're given a parsed github project.
+  //
+  if ('string' === typeof github) github = this.githulk.project(github);
+
+  if (!github.project) {
+    this.repositories(github.name, function listed(err, list) {
+      fn(err, (list || []).map(function map(repository) {
+        return repository.name;
+      }));
+    });
+  } else {
+    if (expand.test(github.project)) {
+      list = expand.exec(github.project)[1].split(/[, ]+/).filter(Boolean);
+    } else {
+      list.push(github.project);
+    }
+
+    fn(undefined, list);
+  }
+
+  return this;
 });
 
 /**

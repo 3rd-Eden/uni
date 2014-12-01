@@ -45,7 +45,45 @@ var Clone = module.exports = Uni.Command.extend({
 
   steps: {
     //
-    // Step 1: Let's get our collaborators
+    // Step 1: Find the module names, if none is given steal it from the github
+    // repositories.
+    //
+    name: function names(next) {
+      var github = this.githulk.project(this.uni.argv[0])
+        , cmd = this;
+
+      if (this.uni.argv[1]) {
+        this.packages[github.project || this.uni.argv[1]] = {
+          name: this.uni.argv[1]
+        };
+
+        return next();
+      }
+
+      this.projects(github, function list(err, projects) {
+        if (err) return next(err);
+
+        async.each(function each(project, next) {
+          cmd.githulk.repository.raw(github.user +'/'+ project, {
+            path: 'package.json'
+          }, function raw(err, content) {
+            if (err) return next(err);
+
+            try { content = JSON.parse(content); }
+            catch(e) { return next(e); }
+
+            cmd.packages[project] = {
+              name: content.name
+            };
+
+            next();
+          });
+        }, next);
+      });
+    },
+
+    //
+    // Step 2: Let's get our collaborators
     //
     collaborators: function collaborators(next) {
       var github = this.githulk.project(this.uni.argv[0])
@@ -55,50 +93,31 @@ var Clone = module.exports = Uni.Command.extend({
       // We either need to sync all the collaborators of the github repository
       // with the npm package
       //
-      if (!this.uni.flag.team) return this.githulk.collaborators.get(
-        this.uni.argv[0], function list(err, collab) {
-          if (err) return next(err);
+      if (!this.uni.flag.team) {
+        return async.each(Object.keys(this.packages), function each(name, next) {
+          cmd.githulk.collaborators.get(github.user +'/'+ name, function list(err, collab) {
+            if (err) return next(err);
 
-          cmd.users = collab.map(function map(user) {
-            return user.login;
+            cmd.packages[name].users = collab.map(function map(user) {
+              return user.login;
+            });
+
+            next();
           });
+        }, next);
+      }
 
-          next();
-        }
-      );
-
-      this.githulk.teams.members(github.user +'/'+ this.uni.flag.team, function (err, members) {
+      this.githulk.teams.members(github.user +'/'+ this.uni.flag.team, function list(err, members) {
         if (err) return next(err);
 
-        cmd.users = members.map(function map(user) {
+        var users = members.map(function map(user) {
           return user.login;
         });
 
-        next();
-      });
-    },
+        Object.keys(cmd.packages).forEach(function each(name) {
+          cmd.packages[name].users = users.slice(0);
+        });
 
-    //
-    // Step 2: Find the module name, if none is given steal it from the github
-    // repository.
-    //
-    name: function name(next) {
-      if (this.uni.argv[1]) {
-        this.package = this.uni.argv[1];
-        return next();
-      }
-
-      var cmd = this;
-
-      this.githulk.repository.raw(this.uni.argv[0], {
-        path: 'package.json'
-      }, function raw(err, content) {
-        if (err) return next(err);
-
-        try { content = JSON.parse(content); }
-        catch(e) { return next(e); }
-
-        cmd.package = content.name;
         next();
       });
     },
@@ -107,23 +126,35 @@ var Clone = module.exports = Uni.Command.extend({
     // Step 3: Resolve the user names to their npm equiv.
     //
     resolve: function resolve(next) {
-      var cmd = this;
+      var confirmed = {}
+        , cmd = this;
 
-      async.map(this.users, function process(github, fn) {
-        cmd.github2npm(github, function resolved(err, npm, guess) {
-          if (!guess || err) return fn(err, npm);
+      async.eachSeries(Object.keys(this.packages), function each(name, next) {
+        var users = cmd.packages[name].users;
 
-          cmd.cli.prompt([{
-            type: 'input',
-            name: 'name',
-            message: 'If '+ github +' is not '+ npm +' on npm, supply the correct username'
-          }], function answered(answer) {
-            return fn(undefined, answer.name.trim() || npm);
+        async.map(users, function process(github, fn) {
+          if (github in confirmed) return fn(undefined, confirmed[github]);
+
+          cmd.github2npm(github, function resolved(err, npm, guess) {
+            if (err) return fn(err);
+            if (!guess) {
+              confirmed[github] = npm;
+              return fn(err, npm);
+            }
+
+            cmd.cli.prompt([{
+              type: 'input',
+              name: 'name',
+              message: 'If '+ github +' is not '+ npm +' on npm, supply the correct username'
+            }], function answered(answer) {
+              confirmed[github] = answer.name.trim() || npm;
+              return fn(undefined, confirmed[github]);
+            });
           });
+        }, function complete(err, users) {
+          cmd.users = users;
+          next();
         });
-      }, function complete(err, users) {
-        cmd.users = users;
-        next();
       });
     },
 
@@ -131,52 +162,47 @@ var Clone = module.exports = Uni.Command.extend({
     // Step 4: And add the owners.
     //
     owner: function owner(next) {
-      var pkg = this.package
-        , npm = this.npm
+      var npm = this.npm
         , uni = this.uni
         , cmd = this;
 
-      this.maintainersDiff(pkg, this.users, function diff(err, stat) {
-        if (err) return next(err);
+      async.eachSeries(Object.keys(this.packages), function each(name, next) {
+        var pkg = cmd.packages[name];
 
-        //
-        // This bit is super important. The last thing we want to do is
-        // accidently remove our own account while syncing.
-        //
-        var me = uni.conf.get('username');
+        cmd.maintainersDiff(pkg.name, pkg.users, function diff(err, stat) {
+          if (err) return next(err);
 
-        stat.add.forEach(function add(name) {
-          console.log('adding', name, 'as maintainer of', pkg);
-          npm().owner('add '+ name +' '+ pkg);
+          //
+          // This bit is super important. The last thing we want to do is
+          // accidentally remove our own account while syncing.
+          //
+          var me = uni.conf.get('username');
+
+          stat.add.forEach(function add(name) {
+            console.log('adding', name, 'as maintainer of', pkg.name);
+            npm().owner('add '+ name +' '+ pkg.name);
+          });
+
+          stat.remove.forEach(function add(name) {
+            console.log('removing', name, 'as maintainer of', pkg.name);
+            npm().owner('rm '+ name +' '+ pkg.name);
+          });
+
+          if (!stat.remove.length && !stat.add.length) {
+            console.log(pkg.name, 'is already in sync with all of its collaborators');
+          }
+
+          next();
         });
-
-        stat.remove.forEach(function add(name) {
-          console.log('removing', name, 'as maintainer of', pkg);
-          npm().owner('rm '+ name +' '+ pkg);
-        });
-
-        if (!stat.remove.length && !stat.add.length) {
-          console.log(pkg, 'is already in sync with all of its collaborators');
-        }
-
-        next();
-      });
+      }, next);
     }
   },
 
   /**
-   * List of users to have access to npm.
+   * github -> {npm, users} listing of the packages we need to sync.
    *
-   * @type {Array}
+   * @type {Object}
    * @public
    */
-  users: [],
-
-  /**
-   * The name of the package we need to check.
-   *
-   * @type {String}
-   * @public
-   */
-  package: ''
+  packages: {}
 });
