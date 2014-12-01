@@ -30,6 +30,14 @@ module.exports = Help.extend({
     '--delete': 'Delete the configuration value, restoring it to the default value'
   },
 
+  /**
+   * Small usage example on which arguments we allow.
+   *
+   * @type {String}
+   * @public
+   */
+  usage: 'uni config <key> <value>',
+
   steps: {
     //
     // Step 1: Are we a get operation? Then we only need to show the current
