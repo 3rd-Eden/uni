@@ -146,11 +146,17 @@ LocalStorage.readable('set', function set(key, data) {
  * @api private
  */
 LocalStorage.readable('save', function save() {
-  var data = this.data;
+  var data = this.data
+    , store = this;
 
   if (!Object.keys(data).length) return this;
 
   fs.writeFileSync(this.file(), JSON.stringify(this.allowed.reduce(function (m, key) {
+    //
+    // Process the keys as the `allowed` array is an unprocessed array of keys.
+    //
+    key = store.key(key);
+
     if (key in data) m[key] = data[key];
     return m;
   }, {}), 2));
