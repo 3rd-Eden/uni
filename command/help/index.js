@@ -29,7 +29,7 @@ module.exports = Uni.Command.extend({
    * @public
    */
   flags: {
-    '--verbose': 'Also output all the help information for each command'
+    '--verbose': 'Help specific, also output all the help information for each command'
   },
 
   /**
@@ -83,6 +83,12 @@ module.exports = Uni.Command.extend({
 
       help.push.apply(help, Object.keys(uni.flags).map(function each(cmd) {
         var description = uni.flags[cmd];
+
+        return '  '+ cmd + (new Array(max - cmd.length).join(' ')) + description;
+      }));
+
+      help.push.apply(help, Object.keys(command.flags).map(function each(cmd) {
+        var description = command.flags[cmd];
 
         return '  '+ cmd + (new Array(max - cmd.length).join(' ')) + description;
       }));
