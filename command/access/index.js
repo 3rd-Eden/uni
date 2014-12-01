@@ -63,7 +63,7 @@ var Clone = module.exports = Uni.Command.extend({
       this.projects(github, function list(err, projects) {
         if (err) return next(err);
 
-        async.each(function each(project, next) {
+        async.each(projects, function each(project, next) {
           cmd.githulk.repository.raw(github.user +'/'+ project, {
             path: 'package.json'
           }, function raw(err, content) {
