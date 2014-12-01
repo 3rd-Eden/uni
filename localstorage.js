@@ -190,8 +190,6 @@ LocalStorage.readable('load', function load() {
     return data;
   }, {}));
 
-  console.log(this.data);
-
   return this;
 });
 
