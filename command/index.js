@@ -322,7 +322,7 @@ CMD.readable('projects', function projects(github, fn) {
   if ('string' === typeof github) github = this.githulk.project(github);
 
   if (!github.project) {
-    this.repositories(github.name, function listed(err, list) {
+    this.repositories(github.user, function listed(err, list) {
       fn(err, (list || []).map(function map(repository) {
         return repository.name;
       }));
