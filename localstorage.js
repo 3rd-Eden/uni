@@ -1,6 +1,7 @@
 'use strict';
 
-var crypto = require('crypto')
+var argv = require('argh').argv
+  , crypto = require('crypto')
   , fuse = require('fusing')
   , path = require('path')
   , fs = require('fs')
@@ -18,6 +19,7 @@ function LocalStorage(name) {
 
   this.fuse();
 
+  this.allowed = Object.keys(this.read(path.join(__dirname, '.uni.help.json')));
   this.defaults = this.read(path.join(__dirname, '.uni.json'));
   this.home = process.env.HOME || process.env.USERPROFILE;
   this.passphrase = this.ssh() || os.hostname();
@@ -144,9 +146,14 @@ LocalStorage.readable('set', function set(key, data) {
  * @api private
  */
 LocalStorage.readable('save', function save() {
-  if (!Object.keys(this.data).length) return this;
+  var data = this.data;
 
-  fs.writeFileSync(this.file(), JSON.stringify(this.data, 2));
+  if (!Object.keys(data).length) return this;
+
+  fs.writeFileSync(this.file(), JSON.stringify(this.allowed.reduce(function (m, key) {
+    if (key in data) m[key] = data[key];
+    return m;
+  }, {}), 2));
 
   return this;
 });
@@ -169,6 +176,21 @@ LocalStorage.readable('load', function load() {
     memo[store.key(key)] = defaults[key];
     return memo;
   }, {}), data || {});
+
+  //
+  // Merge in the argv's so we can override configuration values using CLI
+  // flags. This can be useful if you temporary want to force a --registry or
+  // use different npm username & password
+  //
+  this.data = this.merge(this.data, Object.keys(argv).filter(function filter(key) {
+    return key !== 'argv';
+  }).reduce(function reduce(data, key) {
+    data[store.key(key)] = argv[key];
+
+    return data;
+  }, {}));
+
+  console.log(this.data);
 
   return this;
 });
