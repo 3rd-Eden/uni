@@ -53,7 +53,7 @@ module.exports = Help.extend({
         return this.log(key +': has been removed or restored to the default value');
       }
 
-      this.log(key +': '+ this.uni.conf.render(key));
+      this.log(key +': '+ this.uni.conf.get(key));
     },
 
     //
@@ -90,8 +90,10 @@ module.exports = Help.extend({
       // the config's get method.
       //
       Object.keys(uni.conf.data).map(function map(key) {
-        keys.push(key.charAt(0) === uni.conf.prefix ? key.slice(1) : key);
-        values.push(uni.conf.data[key]);
+        key = key.replace(uni.conf.prefix, '');
+        keys.push(key);
+
+        values.push(uni.conf.get(key));
       });
 
       maxvalue = this.max(values) + 4;
@@ -111,7 +113,7 @@ module.exports = Help.extend({
         return a.localeCompare(b);
       }).forEach(function each(key) {
         var description = this.descriptions[key] || ''
-          , value = uni.conf.render(key)
+          , value = uni.conf.get(key).toString()
           , length = maxdesc;
 
         if (description.length <= length) return this.log([

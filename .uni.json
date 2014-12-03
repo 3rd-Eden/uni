@@ -2,6 +2,5 @@
   "github-clone": "git@github.com:{user}/{repo}.git",
   "ocd": "alphabetical",
   "registry": "http://registry.npmjs.org/",
-  "cols": 100,
-  "algorithm": "rc4"
+  "cols": 100
 }

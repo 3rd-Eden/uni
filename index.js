@@ -1,6 +1,6 @@
 'use strict';
 
-var LocalStorage = require('./localstorage')
+var Storage = require('cli-storage')
   , arg = process.argv.slice(2)
   , fuse = require('fusing')
   , argh = require('argh')
@@ -24,8 +24,17 @@ require('https').globalAgent.maxSockets =
 function Uni(name) {
   if (!(this instanceof Uni)) return new Uni(name);
 
+  name = name || args.config || 'uni';
+
   this.fuse();
-  this.readable('conf', new LocalStorage(name || args.profile || 'uni'));
+  this.readable('conf', new Storage(name, {
+    defaults: require(path.join(__dirname, '.uni.json'))
+  }));
+
+  //
+  // Limit the amount of keys that gets stored.
+  //
+  this.conf.allow(Object.keys(require(path.join(__dirname, '.uni.help.json'))));
 }
 
 fuse(Uni, require('eventemitter3'));
