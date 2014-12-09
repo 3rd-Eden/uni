@@ -290,7 +290,10 @@ CMD.readable('logo', function logo() {
 CMD.readable('repositories', function repositories(name, fn) {
   var githulk = this.githulk;
 
-  githulk.repository.list(name, { organization: true }, function list(err, repos) {
+  githulk.repository.list(name, {
+    organization: true,
+    per_page: 100
+  }, function list(err, repos) {
     if (!err) return fn(err, repos);
 
     githulk.repository.list(name, fn);
