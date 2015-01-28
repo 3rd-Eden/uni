@@ -11,8 +11,8 @@ var Storage = require('cli-storage')
 //
 // Bump max-sockets to something more sane.
 //
-require('https').globalAgent.maxSockets =
- require('http').globalAgent.maxSockets = 100;
+require('http').globalAgent.maxSockets  = 100;
+require('https').globalAgent.maxSockets = 100;
 
 /**
  * An universal integration of GitHub, Git, Node and npm.
