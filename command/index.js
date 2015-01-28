@@ -4,11 +4,11 @@ var Registry = require('npm-registry')
   , dot = require('dot-component')
   , inquirer = require('inquirer')
   , GitHulk = require('githulk')
+  , git = require('git-shizzle')
   , shelly = require('shelljs')
   , kuler = require('kuler')
   , fuse = require('fusing')
   , npm = require('../npm')
-  , git = require('../git')
   , path = require('path')
   , fs = require('fs');
 

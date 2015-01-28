@@ -35,6 +35,7 @@
     "dot-component": "0.1.x",
     "eventemitter3": "0.1.x",
     "fusing": "0.4.x",
+    "git-shizzle": "0.0.x",
     "githulk": "0.2.x",
     "inquirer": "0.8.x",
     "kuler": "0.0.x",

@@ -194,7 +194,7 @@ Uni.readable('run', function run() {
   if (command) return this[command]();
 
   var npm = require('./npm')
-    , git = require('./git');
+    , git = require('git-shizzle');
 
   //
   // Check if we can somehow proxy the command to git or npm.
