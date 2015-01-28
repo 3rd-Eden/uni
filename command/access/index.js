@@ -41,8 +41,9 @@ var Clone = module.exports = Uni.Command.extend({
    */
   flags: {
     '--team': 'Don\'t sync the repo collaborators but sync an organization team',
-    '--add': 'Don\'t add collaborators, a team but an individual account',
-    '--from': 'Get module names from an npm account instead of GitHub'
+    '--from': 'Get module names from an npm account instead of GitHub',
+    '--remove': 'Remove a single collaborator to the project',
+    '--add': 'Add a single collaborator to the project'
   },
 
   steps: {
@@ -111,16 +112,17 @@ var Clone = module.exports = Uni.Command.extend({
     // Step 2: Let's get our collaborators
     //
     collaborators: function collaborators(next) {
-      var github = this.githulk.project(this.uni.argv[0])
+      var single = this.uni.flag.add || this.uni.flag.remove
+        , github = this.githulk.project(this.uni.argv[0])
         , cmd = this;
 
       //
       // We only have to sync one user account, not multiple so we can add them
       // straight away
       //
-      if (this.uni.flag.add) {
+      if (single) {
         Object.keys(cmd.packages).forEach(function each(name) {
-          cmd.packages[name].users = [cmd.uni.flag.add];
+          cmd.packages[name].users = [single];
         });
 
         return next();
@@ -163,13 +165,14 @@ var Clone = module.exports = Uni.Command.extend({
     // Step 3: Resolve the user names to their npm equiv.
     //
     resolve: function resolve(next) {
-      var confirmed = {}
+      var single = this.uni.flag.add || this.uni.flag.remove
+        , confirmed = {}
         , cmd = this;
 
       //
       // Manual entry, assume name is already valid.
       //
-      if (this.uni.flag.add) return next();
+      if (single) return next();
 
       async.eachSeries(Object.keys(this.packages), function each(name, next) {
         var users = cmd.packages[name].users;
@@ -246,7 +249,9 @@ var Clone = module.exports = Uni.Command.extend({
           next();
         }
 
+        if (uni.flag.remove) return diff(undefined, { add: [], remove: pkg.users });
         if (uni.flag.add) return diff(undefined, { add: pkg.users, remove: [] });
+
         return cmd.maintainersDiff(pkg.name, pkg.users, diff);
       }, next);
     }
