@@ -90,7 +90,8 @@ Uni.writable('cwd', process.cwd());
  */
 Uni.readable('flags', {
   '--silence': 'Completely silence the stdout output',
-  '--help': 'Displays help information for a given command'
+  '--help': 'Displays help information for a given command',
+  '--dryrun': 'Don\t make any actual modifications, just attempt to do it'
 });
 
 /**
