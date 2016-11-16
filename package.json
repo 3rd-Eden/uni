@@ -30,20 +30,20 @@
   "homepage": "https://github.com/3rd-Eden/uni",
   "dependencies": {
     "argh": "0.1.x",
-    "async": "0.9.x",
+    "async": "~2.1.2",
     "cli-storage": "0.0.x",
     "dot-component": "0.1.x",
-    "eventemitter3": "0.1.x",
-    "fusing": "0.4.x",
+    "eventemitter3": "~2.0.2",
+    "fusing": "~1.0.0",
     "git-shizzle": "0.0.x",
-    "githulk": "0.2.x",
-    "inquirer": "0.8.x",
+    "githulk": "~1.1.2",
+    "inquirer": "~1.2.3",
     "kuler": "0.0.x",
-    "natural": "0.1.x",
+    "natural": "~0.4.0",
     "npm-registry": "0.1.x",
-    "pathval": "0.1.x",
-    "semver": "2.3.x",
-    "shelljs": "0.3.x"
+    "pathval": "~1.1.0",
+    "semver": "~5.3.0",
+    "shelljs": "~0.7.5"
   },
   "bin": {
     "uni": "./bin/uni"
